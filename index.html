@@ -4,150 +4,311 @@
     <meta charset="UTF-8">
     <meta name="referrer" content="no-referrer">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>希腊驾照模拟 - 自动匹配版</title>
+    <title>希腊驾照模拟 - 专业版</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     <style>
-        :root { --primary: #00529b; --success: #27ae60; --error: #e74c3c; --bg: #f0f2f5; }
-        body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); margin: 0; padding: 0; }
-        .nav { background: var(--primary); color: white; padding: 12px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.2); position: sticky; top:0; z-index:99; }
-        .container { max-width: 700px; margin: 10px auto; padding: 0 10px; padding-bottom: 120px; }
-        .status { background: white; padding: 20px; border-radius: 15px; text-align: center; margin-top: 20px; }
-        .hidden { display: none !important; }
-        .controls { background: white; padding: 12px; border-radius: 12px; margin-bottom: 10px; display: flex; flex-direction: column; gap: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        select { padding: 10px; border-radius: 8px; border: 1px solid #ddd; font-size: 1rem; width: 100%; }
-        .q-card { background: white; border-radius: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.06); padding: 20px; margin-bottom: 15px; }
-        .img-container { text-align: center; margin-bottom: 15px; min-height: 50px; display: flex; align-items: center; justify-content: center; }
-        .img-container img { max-width: 100%; max-height: 350px; border-radius: 8px; border: 1px solid #eee; display: block; }
+        :root { --primary: #00529b; --success: #27ae60; --error: #e74c3c; --bg: #f4f7f9; --accent: #ff9800; }
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); margin: 0; padding: 0; user-select: none; }
+        
+        /* 导航与标题 */
+        .nav { background: var(--primary); color: white; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.2); position: sticky; top:0; z-index:100; }
+        .nav h2 { margin: 0; font-size: 1rem; }
+        
+        /* 主容器 */
+        .container { max-width: 800px; margin: 10px auto; padding: 0 10px; padding-bottom: 120px; }
+        
+        /* 模式切换卡片 */
+        .mode-tabs { display: flex; background: white; border-radius: 12px; margin-bottom: 15px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .tab { flex: 1; padding: 12px; text-align: center; cursor: pointer; font-weight: bold; font-size: 0.9rem; color: #666; transition: 0.2s; }
+        .tab.active { background: var(--primary); color: white; }
+
+        /* 分类列表（带进度） */
+        .cat-list { background: white; border-radius: 15px; padding: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .cat-item { display: flex; flex-direction: column; padding: 12px; border-bottom: 1px solid #f0f0f0; cursor: pointer; }
+        .cat-item:hover { background: #f8fbff; }
+        .cat-info { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 0.9rem; }
+        .progress-bar { height: 6px; background: #eee; border-radius: 3px; overflow: hidden; }
+        .progress-fill { height: 100%; background: var(--success); transition: width 0.3s; }
+
+        /* 题目卡片 */
+        .q-card { background: white; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); padding: 20px; margin-bottom: 15px; animation: slideIn 0.3s; }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .img-container { text-align: center; margin-bottom: 15px; background: #fff; min-height: 50px; }
+        .img-container img { max-width: 100%; max-height: 300px; border-radius: 8px; border: 1px solid #eee; }
+
         .q-text { border-left: 5px solid var(--primary); padding-left: 12px; margin-bottom: 20px; }
         .en { font-size: 1.1rem; font-weight: bold; color: #2d3748; display: block; margin-bottom: 5px; }
         .cn { font-size: 1.05rem; color: #16a085; display: block; }
-        .opt { border: 2px solid #edf2f7; border-radius: 12px; padding: 15px; margin-bottom: 10px; cursor: pointer; background: #fff; display: flex; }
+
+        /* 选项 */
+        .opt { border: 2px solid #edf2f7; border-radius: 12px; padding: 15px; margin-bottom: 10px; cursor: pointer; background: #fff; display: flex; align-items: flex-start; transition: 0.1s; }
+        .opt:hover:not(.locked) { border-color: var(--primary); background: #f7fafc; }
         .opt.correct { background: #e6fffa !important; border-color: var(--success) !important; color: #22543d; font-weight: bold; }
         .opt.wrong { background: #fff5f5 !important; border-color: var(--error) !important; color: #822727; }
-        .footer { position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 10px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 -3px 15px rgba(0,0,0,0.05); }
-        .btn { padding: 10px 25px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; background: var(--primary); color: white; }
+        .opt-idx { font-weight: bold; margin-right: 12px; color: var(--primary); }
+
+        /* 考试汇总 */
+        .exam-result { text-align: center; padding: 30px; background: white; border-radius: 15px; }
+        .score { font-size: 3rem; font-weight: bold; color: var(--primary); }
+
+        /* 底部操作栏 */
+        .footer { position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 -3px 15px rgba(0,0,0,0.05); }
+        .btn { padding: 12px 20px; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; background: var(--primary); color: white; }
+        .btn-exam { background: var(--accent); }
+        .btn-grey { background: #edf2f7; color: #4a5568; }
+
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
-<div class="nav"><h2 style="margin:0; font-size:1.1rem">希腊驾照理论模拟</h2></div>
-
-<div class="container">
-    <div id="statusBox" class="status"><h3>同步云端题库中...</h3></div>
-
-    <div id="practiceArea" class="hidden">
-        <div class="controls">
-            <select id="fileSelect" onchange="loadUrlFile()">
-                <option value="data.csv">汽车题库 (data.csv)</option>
-                <option value="datamoto.csv">摩托题库 (datamoto.csv)</option>
-            </select>
-            <select id="catSelect" onchange="onCatChange()"></select>
-        </div>
-        <div id="quiz"></div>
-    </div>
+<div class="nav">
+    <h2 id="navTitle">希腊驾照模拟 - 加载中...</h2>
+    <select id="fileSelect" onchange="loadFile()" style="background:rgba(255,255,255,0.2); color:white; border:none; border-radius:4px; padding:2px;">
+        <option value="data.csv">汽车题库</option>
+        <option value="datamoto.csv">摩托题库</option>
+    </select>
 </div>
 
-<div class="footer hidden" id="footer">
-    <button class="btn" onclick="move(-1)">上题</button>
-    <div id="pageInfo" style="font-weight:bold; font-size:0.9rem">0 / 0</div>
-    <button class="btn" onclick="move(1)">下题</button>
+<div class="container">
+    <!-- 顶栏切换 -->
+    <div id="mainTabs" class="mode-tabs hidden">
+        <div class="tab active" onclick="switchMode('list')">专题</div>
+        <div class="tab" onclick="switchMode('mistake')">错题本 <span id="mistakeCount"></span></div>
+        <div class="tab" onclick="startExam()">模拟考</div>
+    </div>
+
+    <!-- 1. 专题列表页 -->
+    <div id="listView" class="cat-list hidden"></div>
+
+    <!-- 2. 刷题页 -->
+    <div id="quizView" class="hidden">
+        <div id="quizContent"></div>
+    </div>
+
+    <!-- 3. 考试结算页 -->
+    <div id="resultView" class="exam-result hidden"></div>
+</div>
+
+<!-- 底部控制 -->
+<div id="quizFooter" class="footer hidden">
+    <button class="btn btn-grey" onclick="moveQ(-1)">上题</button>
+    <div id="pageInfo" style="text-align:center; font-size:0.8rem"></div>
+    <button class="btn" onclick="moveQ(1)">下题</button>
 </div>
 
 <script>
-    let masterData = [], filteredData = [], currentIdx = 0, locked = false;
+    let masterData = []; 
+    let currentQuestions = [];
+    let currentIdx = 0;
+    let currentMode = 'list'; // list, practice, exam, mistake
+    let userHistory = JSON.parse(localStorage.getItem('greece_drive_history') || '{}');
+    let mistakeIds = JSON.parse(localStorage.getItem('greece_drive_mistakes') || '[]');
 
-    window.onload = loadUrlFile;
+    window.onload = loadFile;
 
-    function loadUrlFile() {
+    function loadFile() {
         const file = document.getElementById('fileSelect').value;
-        masterData = [];
         Papa.parse(file, {
             download: true, skipEmptyLines: true,
             complete: function(res) {
-                parseTable(res.data);
-                if (masterData.length > 0) {
-                    document.getElementById('statusBox').classList.add('hidden');
-                    document.getElementById('practiceArea').classList.remove('hidden');
-                    document.getElementById('footer').classList.remove('hidden');
-                    const cats = [...new Set(masterData.map(d => d.cat))];
-                    document.getElementById('catSelect').innerHTML = cats.map(c => `<option value="${c}">${c}</option>`).join("");
-                    onCatChange();
-                }
+                parseCSV(res.data);
+                showDashboard();
             }
         });
     }
 
-    function parseTable(data) {
-        // 遍历所有列，每3列一组
+    function parseCSV(data) {
+        masterData = [];
         for (let col = 0; col < data[0].length; col += 3) {
-            let catEn = data[0][col];
-            let catCn = data[0][col+1] || "";
-            if (!catEn || catEn.trim() === "") continue;
+            let catEn = data[0][col], catCn = data[0][col+1] || "";
+            if (!catEn) continue;
+            let catName = catCn.trim() || catEn.trim();
+            let imgPrefix = catName.split("专题")[0].trim();
 
-            // 提取图片前缀：从中文标题中提取，例如 "交警指挥专题" -> 提取 "交警指挥"
-            let imgPrefix = catCn.split("专题")[0].trim();
-
-            let questionCounter = 1; // 每个专题内的题目计数
+            let qCounter = 1;
             for (let row = 1; row < data.length; row++) {
                 let cellEn = data[row][col], cellCn = data[row][col+1];
                 if (cellEn && cellEn.trim().length > 5) {
-                    const q = parseContent(cellEn, cellCn);
+                    const q = splitLogic(cellEn, cellCn);
                     if (q) {
-                        q.cat = catCn.trim() || catEn.trim();
-                        // 核心图片逻辑：前缀 + 该专题内的序号
-                        q.imgName = imgPrefix + questionCounter + ".jpg";
+                        q.cat = catName;
+                        q.img = imgPrefix + qCounter + ".jpg";
+                        q.uid = catName + "_" + qCounter; // 唯一ID
                         masterData.push(q);
-                        questionCounter++;
+                        qCounter++;
                     }
                 }
             }
         }
     }
 
-    function parseContent(en, cn) {
+    function splitLogic(en, cn) {
         let ans = -1; const t = cn.replace(/\s/g, "");
         if (t.includes("√1)")) ans = 0; else if (t.includes("√2)")) ans = 1; else if (t.includes("√3)")) ans = 2;
-        
-        const splitText = (txt) => {
+        const s = (txt) => {
             let p = txt.split(/\d\)\s?/);
-            return { q: p[0].replace(/√/g, "").trim(), opts: p.slice(1).map(o => o.replace(/√/g, "").trim()).filter(o => o !== "") };
+            return { q: p[0].replace(/√/g, "").trim(), o: p.slice(1).map(x => x.replace(/√/g, "").trim()).filter(x => x !== "") };
         };
-        const eC = splitText(en), cC = splitText(cn);
-        if (eC.opts.length < 2) return null;
-        return { qEn: eC.q, qCn: cC.q, options: eC.opts.map((e, i) => ({ en: e, cn: cC.opts[i] || "" })), ans };
+        const eC = s(en), cC = s(cn);
+        if (eC.o.length < 2) return null;
+        return { qEn: eC.q, qCn: cC.q, options: eC.o.map((e, i) => ({ en: e, cn: cC.o[i] || "" })), ans };
     }
 
-    function onCatChange() {
-        filteredData = masterData.filter(d => d.cat === document.getElementById('catSelect').value);
-        currentIdx = 0; render();
+    // --- 界面管理 ---
+    function showDashboard() {
+        currentMode = 'list';
+        document.getElementById('navTitle').innerText = "希腊驾照模拟 - 专题选择";
+        document.getElementById('mainTabs').classList.remove('hidden');
+        document.getElementById('listView').classList.remove('hidden');
+        document.getElementById('quizView').classList.add('hidden');
+        document.getElementById('quizFooter').classList.add('hidden');
+        document.getElementById('resultView').classList.add('hidden');
+        document.getElementById('mistakeCount').innerText = mistakeIds.length > 0 ? `(${mistakeIds.length})` : "";
+
+        const cats = [...new Set(masterData.map(d => d.cat))];
+        let html = "";
+        cats.forEach(c => {
+            const list = masterData.filter(d => d.cat === c);
+            const done = list.filter(d => userHistory[d.uid]).length;
+            const perc = Math.round((done / list.length) * 100);
+            html += `
+                <div class="cat-item" onclick="startPractice('${c}')">
+                    <div class="cat-info">
+                        <b>${c}</b>
+                        <span>${done}/${list.length}</span>
+                    </div>
+                    <div class="progress-bar"><div class="progress-fill" style="width:${perc}%"></div></div>
+                </div>`;
+        });
+        document.getElementById('listView').innerHTML = html;
     }
 
-    function render() {
-        const q = filteredData[currentIdx]; locked = false;
-        document.getElementById('pageInfo').innerText = (currentIdx + 1) + " / " + filteredData.length;
+    function startPractice(catName) {
+        currentMode = 'practice';
+        currentQuestions = masterData.filter(d => d.cat === catName);
+        currentIdx = 0;
+        document.getElementById('navTitle').innerText = catName;
+        enterQuiz();
+    }
+
+    function startMistakes() {
+        if (mistakeIds.length === 0) return alert("目前没有错题记录！");
+        currentMode = 'mistake';
+        currentQuestions = masterData.filter(d => mistakeIds.includes(d.uid));
+        currentIdx = 0;
+        document.getElementById('navTitle').innerText = "错题强化练习";
+        enterQuiz();
+    }
+
+    function startExam() {
+        currentMode = 'exam';
+        // 随机抽取 30 题
+        currentQuestions = [...masterData].sort(() => 0.5 - Math.random()).slice(0, 30);
+        currentIdx = 0;
+        document.getElementById('navTitle').innerText = "模拟考试模式 (30题)";
+        enterQuiz();
+    }
+
+    function enterQuiz() {
+        document.getElementById('listView').classList.add('hidden');
+        document.getElementById('quizView').classList.remove('hidden');
+        document.getElementById('quizFooter').classList.remove('hidden');
+        renderQuestion();
+    }
+
+    function renderQuestion() {
+        const q = currentQuestions[currentIdx];
+        const isAnswered = q.userAns !== undefined;
+        document.getElementById('pageInfo').innerText = `${currentIdx + 1} / ${currentQuestions.length}`;
         
-        // 既然图片都在根目录，直接引用文件名即可
-        // 考虑到可能在 images 文件夹，加个自动回退
-        document.getElementById('quiz').innerHTML = `
+        let html = `
             <div class="q-card">
                 <div class="img-container">
-                    <img src="${q.imgName}" onerror="this.src='images/${q.imgName}'; this.onerror=function(){this.parentElement.style.display='none'};">
+                    <img src="${q.img}" onerror="this.src='images/${q.img}'; this.onerror=function(){this.parentElement.style.display='none'};">
                 </div>
-                <div class="q-text"><span class="en">${q.qEn}</span><span class="cn">${q.qCn}</span></div>
+                <div class="q-text">
+                    <span class="en">${q.qEn}</span>
+                    <span class="cn">${q.qCn}</span>
+                </div>
                 <div class="options">
-                    ${q.options.map((o, i) => `<div class="opt" onclick="check(${i}, this)"><span style="font-weight:bold;margin-right:10px">${i+1})</span><div style="flex:1"><div>${o.en}</div><div style="color:#666;font-size:0.9rem">${o.cn}</div></div></div>`).join("")}
+                    ${q.options.map((o, i) => {
+                        let cls = "";
+                        if (isAnswered) {
+                            if (i === q.ans) cls = "correct";
+                            else if (i === q.userAns) cls = "wrong";
+                        }
+                        return `<div class="opt ${cls} ${isAnswered?'locked':''}" onclick="handleCheck(${i})">
+                            <span class="opt-idx">${i+1})</span>
+                            <div style="flex:1"><div>${o.en}</div><div style="color:#666;font-size:0.9rem">${o.cn}</div></div>
+                        </div>`;
+                    }).join("")}
                 </div>
             </div>`;
+        document.getElementById('quizContent').innerHTML = html;
     }
 
-    function check(i, el) {
-        if (locked) return; locked = true;
-        const q = filteredData[currentIdx];
-        if (i === q.ans) el.classList.add('correct');
-        else { el.classList.add('wrong'); if(q.ans !== -1) document.querySelectorAll('.opt')[q.ans].classList.add('correct'); }
+    function handleCheck(idx) {
+        const q = currentQuestions[currentIdx];
+        if (q.userAns !== undefined) return;
+
+        q.userAns = idx;
+        const isCorrect = idx === q.ans;
+
+        // 记录历史和进度
+        if (isCorrect) {
+            userHistory[q.uid] = true;
+            localStorage.setItem('greece_drive_history', JSON.stringify(userHistory));
+        } else {
+            if (!mistakeIds.includes(q.uid)) {
+                mistakeIds.push(q.uid);
+                localStorage.setItem('greece_drive_mistakes', JSON.stringify(mistakeIds));
+            }
+        }
+        
+        renderQuestion();
+
+        // 模拟考自动跳转
+        if (currentMode === 'exam') {
+            setTimeout(() => {
+                if (currentIdx < currentQuestions.length - 1) moveQ(1);
+                else finishExam();
+            }, 1000);
+        }
     }
 
-    function move(s) { currentIdx = (currentIdx + s + filteredData.length) % filteredData.length; render(); window.scrollTo(0,0); }
+    function finishExam() {
+        const correctCount = currentQuestions.filter(q => q.userAns === q.ans).length;
+        const pass = correctCount >= 29; // 假设 30 题错 1 题及格
+        document.getElementById('quizView').classList.add('hidden');
+        document.getElementById('quizFooter').classList.add('hidden');
+        document.getElementById('resultView').classList.remove('hidden');
+        
+        document.getElementById('resultView').innerHTML = `
+            <div class="score">${correctCount}/30</div>
+            <h2>${pass ? '🎉 考试通过！' : '❌ 不及格，请继续努力'}</h2>
+            <p>及格要求：至少答对 29 题</p>
+            <button class="btn" onclick="showDashboard()">返回首页</button>
+        `;
+    }
+
+    function moveQ(s) {
+        currentIdx = (currentIdx + s + currentQuestions.length) % currentQuestions.length;
+        renderQuestion();
+        window.scrollTo(0,0);
+    }
+
+    function switchMode(m) {
+        if (m === 'list') showDashboard();
+        if (m === 'mistake') startMistakes();
+    }
+
+    // 支持键盘翻题
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft') moveQ(-1);
+        if (e.key === 'ArrowRight') moveQ(1);
+    });
 </script>
 </body>
 </html>
