@@ -4,65 +4,52 @@
     <meta charset="UTF-8">
     <meta name="referrer" content="no-referrer">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>希腊驾照模拟 - V18 视觉固定版</title>
+    <title>希腊驾照模拟 - V19 稳定版</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     <style>
         :root { --primary: #00529b; --success: #27ae60; --error: #e74c3c; --bg: #f4f7f9; }
         body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); margin: 0; padding: 0; user-select: none; }
         
-        /* 导航栏 */
         .nav { background: var(--primary); color: white; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; position: sticky; top:0; z-index:100; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
-        .nav h2 { margin: 0; font-size: 1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px; }
-        .home-btn { background: rgba(255,255,255,0.2); color: white; border: 1px solid white; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: bold; }
+        .nav h2 { margin: 0; font-size: 1rem; }
+        .home-btn { background: rgba(255,255,255,0.2); color: white; border: 1px solid white; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; }
 
         .container { max-width: 800px; margin: 10px auto; padding: 0 10px; padding-bottom: 120px; }
         
-        /* 顶部选项卡 */
         .mode-tabs { display: flex; background: white; border-radius: 12px; margin-bottom: 15px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         .tab { flex: 1; padding: 12px; text-align: center; cursor: pointer; font-weight: bold; font-size: 0.9rem; color: #666; border-bottom: 3px solid transparent; }
         .tab.active { color: var(--primary); border-bottom-color: var(--primary); background: #f0f7ff; }
 
-        /* 专题列表 */
         .cat-list { background: white; border-radius: 15px; padding: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
         .cat-item { display: flex; flex-direction: column; padding: 15px; border-bottom: 1px solid #f0f0f0; cursor: pointer; }
         .cat-info { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.95rem; }
         .progress-bar { height: 6px; background: #eee; border-radius: 3px; overflow: hidden; }
         .progress-fill { height: 100%; background: var(--success); transition: width 0.3s; }
 
-        /* 题目卡片 */
-        .q-card { background: white; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); padding: 20px; margin-bottom: 15px; min-height: 600px; }
+        /* 题目卡片：增加最小高度，固定图片区高度 */
+        .q-card { background: white; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); padding: 20px; margin-bottom: 15px; min-height: 550px; }
         
-        /* 核心修改：固定图片区域高度，防止文字跳动 */
         .img-fixed-area { 
             width: 100%; 
-            height: 300px; /* 固定高度 */
+            height: 300px; /* 强制固定高度 */
             display: flex; 
             align-items: center; 
             justify-content: center; 
             margin-bottom: 20px;
-            background: #fafafa; /* 无图时显示淡淡的灰色背景，也可以改白色 */
+            background: #fafafa; /* 无图时显示的空白颜色 */
             border-radius: 10px;
-            overflow: hidden;
         }
-        .img-fixed-area img { 
-            max-width: 100%; 
-            max-height: 100%; 
-            object-fit: contain; 
-            display: block; 
-        }
+        .img-fixed-area img { max-width: 100%; max-height: 100%; object-fit: contain; }
 
         .q-text { border-left: 5px solid var(--primary); padding-left: 12px; margin-bottom: 20px; }
-        .en { font-size: 1.1rem; font-weight: bold; color: #2d3748; display: block; margin-bottom: 5px; line-height: 1.4; }
-        .cn { font-size: 1.05rem; color: #16a085; display: block; line-height: 1.4; }
+        .en { font-size: 1.1rem; font-weight: bold; color: #2d3748; display: block; margin-bottom: 5px; }
+        .cn { font-size: 1.05rem; color: #16a085; display: block; }
 
-        /* 选项 */
-        .opt { border: 2px solid #edf2f7; border-radius: 12px; padding: 15px; margin-bottom: 10px; cursor: pointer; background: #fff; display: flex; align-items: flex-start; transition: 0.1s; }
-        .opt:hover:not(.locked) { border-color: var(--primary); background: #f7fafc; }
+        .opt { border: 2px solid #edf2f7; border-radius: 12px; padding: 15px; margin-bottom: 10px; cursor: pointer; background: #fff; display: flex; align-items: flex-start; }
         .opt.correct { background: #e6fffa !important; border-color: var(--success) !important; color: #22543d; font-weight: bold; }
         .opt.wrong { background: #fff5f5 !important; border-color: var(--error) !important; color: #822727; }
         .opt-idx { font-weight: bold; margin-right: 12px; color: var(--primary); }
 
-        /* 底部操作 */
         .footer { position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 -3px 15px rgba(0,0,0,0.05); z-index:100; }
         .btn { padding: 12px 25px; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; background: var(--primary); color: white; }
         .btn-grey { background: #edf2f7; color: #4a5568; }
@@ -77,14 +64,13 @@
     <button id="backBtn" class="home-btn hidden" onclick="showDashboard()">🏠 首页</button>
     <h2 id="navTitle">希腊驾照模拟</h2>
     <select id="fileSelect" onchange="loadFile()" style="background:rgba(255,255,255,0.2); color:white; border:none; border-radius:4px; padding:4px;">
-        <option value="data.csv">汽车题库</option>
-        <option value="datamoto.csv">摩托题库</option>
+        <option value="data.csv">汽车考题</option>
+        <option value="datamoto.csv">摩托考题</option>
     </select>
 </div>
 
 <div id="debugPrefix" class="hidden">
-    图片修正: <input type="text" id="manualPrefix" style="width:70px" oninput="updatePrefix()"> 
-    <span style="color:#666; font-size:0.6rem">(如：高速公路)</span>
+    图片前缀修正: <input type="text" id="manualPrefix" style="width:70px" oninput="updatePrefix()"> 
 </div>
 
 <div class="container">
@@ -110,9 +96,13 @@
 </div>
 
 <script>
+    // 使用 V5 版本 KEY 强制清除旧逻辑缓存
+    const HISTORY_KEY = 'greece_history_v5';
+    const MISTAKE_KEY = 'greece_mistakes_v5';
+
     let masterData = [], currentQuestions = [], currentIdx = 0, currentMode = 'list';
-    let userHistory = JSON.parse(localStorage.getItem('greece_history_v4') || '{}');
-    let mistakeIds = JSON.parse(localStorage.getItem('greece_mistakes_v4') || '[]');
+    let userHistory = JSON.parse(localStorage.getItem(HISTORY_KEY) || '{}');
+    let mistakeIds = JSON.parse(localStorage.getItem(MISTAKE_KEY) || '[]');
 
     window.onload = loadFile;
 
@@ -173,7 +163,6 @@
         document.getElementById('resultView').classList.add('hidden');
         document.getElementById('debugPrefix').classList.add('hidden');
         document.getElementById('backBtn').classList.add('hidden');
-        
         document.getElementById('tab-list').className = 'tab active';
         document.getElementById('tab-mistake').className = 'tab';
         document.getElementById('tab-mistake').innerText = `错题本 (${mistakeIds.length})`;
@@ -221,6 +210,7 @@
         document.getElementById('backBtn').classList.remove('hidden');
         document.getElementById('quizView').classList.remove('hidden');
         document.getElementById('quizFooter').classList.remove('hidden');
+        document.getElementById('debugPrefix').classList.remove('hidden');
         renderQuestion();
     }
 
@@ -235,58 +225,52 @@
 
         let html = `
             <div class="q-card">
-                <div class="img-fixed-area" id="imgBox">
+                <div class="img-fixed-area">
                     <img id="qImg" src="${fileName}" 
-                         onload="this.style.visibility='visible'" 
-                         onerror="tryImagesSubPath(this, '${fileName}')">
+                         onload="this.style.display='block'" 
+                         onerror="trySub(this, '${fileName}')">
                 </div>
                 <div class="q-text"><span class="en">${q.qEn}</span><span class="cn">${q.qCn}</span></div>
                 <div class="options">
                     ${q.options.map((o, i) => {
                         let cls = isAnswered ? (i === q.ans ? "correct" : (i === q.userAns ? "wrong" : "")) : "";
                         return `<div class="opt ${cls}" onclick="handleCheck(${i})">
-                            <span style="font-weight:bold;margin-right:10px">${i+1})</span>
+                            <span class="opt-idx">${i+1})</span>
                             <div style="flex:1"><div>${o.en}</div><div style="color:#666;font-size:0.9rem">${o.cn}</div></div>
                         </div>`;
                     }).join("")}
                 </div>
             </div>`;
         document.getElementById('quizContent').innerHTML = html;
-        // 初始设为隐藏，直到加载成功
-        const img = document.getElementById('qImg');
-        if(img) img.style.visibility = 'hidden';
     }
 
-    function tryImagesSubPath(img, encoded) {
+    function trySub(img, encoded) {
         if (!img.dataset.tried) {
             img.dataset.tried = "true";
             img.src = "images/" + encoded;
         } else {
-            // 彻底失败，隐藏图片标签，但保留父容器高度（显示空白）
-            img.style.display = 'none';
+            img.style.display = 'none'; // 彻底加载不到图，隐藏图片标签，保留父容器高度
         }
     }
 
     function handleCheck(idx) {
         const q = currentQuestions[currentIdx];
         if (q.userAns !== undefined) return;
-        q.userAns = idx;
         
+        q.userAns = idx;
         if (idx === q.ans) {
             userHistory[q.uid] = true;
-            localStorage.setItem('greece_history_v4', JSON.stringify(userHistory));
+            localStorage.setItem(HISTORY_KEY, JSON.stringify(userHistory));
         } else {
             if (!mistakeIds.includes(q.uid)) {
                 mistakeIds.push(q.uid);
-                localStorage.setItem('greece_mistakes_v4', JSON.stringify(mistakeIds));
+                localStorage.setItem(MISTAKE_KEY, JSON.stringify(mistakeIds));
             }
         }
         renderQuestion();
         
-        // 重点：只有模拟考模式下自动跳转
-        if (currentMode === 'exam') {
-            setTimeout(() => moveQ(1), 1500);
-        }
+        // 【注意】这里删除了所有 setTimeout 自动跳转代码。
+        // 现在点击完答案后，必须手动点击底部的“下一题”。
     }
 
     function moveQ(s) {
@@ -300,6 +284,7 @@
         const score = currentQuestions.filter(q => q.userAns === q.ans).length;
         document.getElementById('quizView').classList.add('hidden');
         document.getElementById('quizFooter').classList.add('hidden');
+        document.getElementById('debugPrefix').classList.add('hidden');
         const rv = document.getElementById('resultView');
         rv.classList.remove('hidden');
         rv.innerHTML = `<div style="font-size:3rem; font-weight:bold; color:var(--primary)">${score}/30</div>
