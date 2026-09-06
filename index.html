@@ -2,70 +2,69 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
+    <meta name="referrer" content="no-referrer">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>希腊驾照模拟 - 最终兼容版</title>
+    <title>希腊驾照模拟 - 自动匹配版</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     <style>
         :root { --primary: #00529b; --success: #27ae60; --error: #e74c3c; --bg: #f0f2f5; }
-        body { font-family: system-ui, sans-serif; background: var(--bg); margin: 0; padding: 0; }
+        body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); margin: 0; padding: 0; }
         .nav { background: var(--primary); color: white; padding: 12px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.2); position: sticky; top:0; z-index:99; }
         .container { max-width: 700px; margin: 10px auto; padding: 0 10px; padding-bottom: 120px; }
-        .status-box { background: white; padding: 20px; border-radius: 15px; text-align: center; margin-top: 20px; }
+        .status { background: white; padding: 20px; border-radius: 15px; text-align: center; margin-top: 20px; }
         .hidden { display: none !important; }
         .controls { background: white; padding: 12px; border-radius: 12px; margin-bottom: 10px; display: flex; flex-direction: column; gap: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        select { padding: 10px; border-radius: 8px; border: 1px solid #ddd; font-size: 0.95rem; }
-        .prefix-config { font-size: 0.75rem; color: #d32f2f; background: #fffde7; padding: 8px; border-radius: 8px; text-align: center; margin-bottom: 10px; border: 1px solid #ffe58f; }
+        select { padding: 10px; border-radius: 8px; border: 1px solid #ddd; font-size: 1rem; width: 100%; }
         .q-card { background: white; border-radius: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.06); padding: 20px; margin-bottom: 15px; }
-        .img-container { text-align: center; margin-bottom: 15px; background: #fafafa; border-radius: 10px; min-height: 100px; display: flex; align-items: center; justify-content: center; }
-        .img-container img { max-width: 100%; max-height: 300px; border: 1px solid #eee; display: block; }
+        .img-container { text-align: center; margin-bottom: 15px; min-height: 50px; display: flex; align-items: center; justify-content: center; }
+        .img-container img { max-width: 100%; max-height: 350px; border-radius: 8px; border: 1px solid #eee; display: block; }
         .q-text { border-left: 5px solid var(--primary); padding-left: 12px; margin-bottom: 20px; }
         .en { font-size: 1.1rem; font-weight: bold; color: #2d3748; display: block; margin-bottom: 5px; }
         .cn { font-size: 1.05rem; color: #16a085; display: block; }
         .opt { border: 2px solid #edf2f7; border-radius: 12px; padding: 15px; margin-bottom: 10px; cursor: pointer; background: #fff; display: flex; }
         .opt.correct { background: #e6fffa !important; border-color: var(--success) !important; color: #22543d; font-weight: bold; }
         .opt.wrong { background: #fff5f5 !important; border-color: var(--error) !important; color: #822727; }
-        .footer { position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 -3px 15px rgba(0,0,0,0.05); }
-        .btn { padding: 12px 25px; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; background: var(--primary); color: white; }
+        .footer { position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 10px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 -3px 15px rgba(0,0,0,0.05); }
+        .btn { padding: 10px 25px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; background: var(--primary); color: white; }
     </style>
 </head>
 <body>
 
-<div class="nav"><h2 style="margin:0">希腊驾照模拟 - 最终兼容版</h2></div>
+<div class="nav"><h2 style="margin:0; font-size:1.1rem">希腊驾照理论模拟</h2></div>
 
 <div class="container">
-    <div id="statusBox" class="status-box">
-        <h3 id="statusText">正在同步云端题库...</h3>
-        <p id="statusSubtext" style="color: #666; font-size: 0.8rem;">(若黄色圆点未变绿，请稍等1分钟)</p>
-    </div>
+    <div id="statusBox" class="status"><h3>同步云端题库中...</h3></div>
 
     <div id="practiceArea" class="hidden">
         <div class="controls">
-            <select id="fileSelect" onchange="autoLoad()"><option value="data.csv">汽车题库</option><option value="datamoto.csv">摩托题库</option></select>
+            <select id="fileSelect" onchange="loadUrlFile()">
+                <option value="data.csv">汽车题库 (data.csv)</option>
+                <option value="datamoto.csv">摩托题库 (datamoto.csv)</option>
+            </select>
             <select id="catSelect" onchange="onCatChange()"></select>
         </div>
-        <div class="prefix-config">图片不出？改这里：<input type="text" id="pfix" style="width:60px" oninput="render()"> (如：交警指挥)</div>
         <div id="quiz"></div>
     </div>
 </div>
 
 <div class="footer hidden" id="footer">
     <button class="btn" onclick="move(-1)">上题</button>
-    <div id="pageInfo" style="font-weight:bold;">0/0</div>
+    <div id="pageInfo" style="font-weight:bold; font-size:0.9rem">0 / 0</div>
     <button class="btn" onclick="move(1)">下题</button>
 </div>
 
 <script>
     let masterData = [], filteredData = [], currentIdx = 0, locked = false;
 
-    window.onload = autoLoad;
+    window.onload = loadUrlFile;
 
-    function autoLoad() {
+    function loadUrlFile() {
         const file = document.getElementById('fileSelect').value;
         masterData = [];
         Papa.parse(file, {
             download: true, skipEmptyLines: true,
             complete: function(res) {
-                process(res.data);
+                parseTable(res.data);
                 if (masterData.length > 0) {
                     document.getElementById('statusBox').classList.add('hidden');
                     document.getElementById('practiceArea').classList.remove('hidden');
@@ -73,62 +72,71 @@
                     const cats = [...new Set(masterData.map(d => d.cat))];
                     document.getElementById('catSelect').innerHTML = cats.map(c => `<option value="${c}">${c}</option>`).join("");
                     onCatChange();
-                } else { document.getElementById('statusText').innerText = "未在 " + file + " 中找到题目"; }
+                }
             }
         });
     }
 
-    function process(data) {
+    function parseTable(data) {
+        // 遍历所有列，每3列一组
         for (let col = 0; col < data[0].length; col += 3) {
-            let catEn = data[0][col], catCn = data[0][col+1] || "";
-            if (!catEn) continue;
+            let catEn = data[0][col];
+            let catCn = data[0][col+1] || "";
+            if (!catEn || catEn.trim() === "") continue;
+
+            // 提取图片前缀：从中文标题中提取，例如 "交警指挥专题" -> 提取 "交警指挥"
+            let imgPrefix = catCn.split("专题")[0].trim();
+
+            let questionCounter = 1; // 每个专题内的题目计数
             for (let row = 1; row < data.length; row++) {
                 let cellEn = data[row][col], cellCn = data[row][col+1];
-                if (cellEn && cellEn.length > 10) {
-                    const q = parse(cellEn, cellCn);
+                if (cellEn && cellEn.trim().length > 5) {
+                    const q = parseContent(cellEn, cellCn);
                     if (q) {
                         q.cat = catCn.trim() || catEn.trim();
-                        q.prefix = q.cat.match(/^[\u4e00-\u9fa5]{2}/) ? q.cat.match(/^[\u4e00-\u9fa5]{2}/)[0] : "";
-                        q.idx = row - 1;
+                        // 核心图片逻辑：前缀 + 该专题内的序号
+                        q.imgName = imgPrefix + questionCounter + ".jpg";
                         masterData.push(q);
+                        questionCounter++;
                     }
                 }
             }
         }
     }
 
-    function parse(en, cn) {
+    function parseContent(en, cn) {
         let ans = -1; const t = cn.replace(/\s/g, "");
         if (t.includes("√1)")) ans = 0; else if (t.includes("√2)")) ans = 1; else if (t.includes("√3)")) ans = 2;
-        const split = (txt) => {
+        
+        const splitText = (txt) => {
             let p = txt.split(/\d\)\s?/);
             return { q: p[0].replace(/√/g, "").trim(), opts: p.slice(1).map(o => o.replace(/√/g, "").trim()).filter(o => o !== "") };
         };
-        const eC = split(en), cC = split(cn);
+        const eC = splitText(en), cC = splitText(cn);
         if (eC.opts.length < 2) return null;
-        return { qEn: eC.q, qCn: cC.q, options: eC.opts.map((e,i)=>({en:e, cn:cC.opts[i]||""})), ans };
+        return { qEn: eC.q, qCn: cC.q, options: eC.opts.map((e, i) => ({ en: e, cn: cC.opts[i] || "" })), ans };
     }
 
     function onCatChange() {
         filteredData = masterData.filter(d => d.cat === document.getElementById('catSelect').value);
-        document.getElementById('pfix').value = filteredData[0].prefix;
         currentIdx = 0; render();
     }
 
     function render() {
         const q = filteredData[currentIdx]; locked = false;
         document.getElementById('pageInfo').innerText = (currentIdx + 1) + " / " + filteredData.length;
-        const pf = document.getElementById('pfix').value;
-        const name = pf + q.idx + ".jpg";
         
-        // 智能路径：先找 images/ 再找 根目录
+        // 既然图片都在根目录，直接引用文件名即可
+        // 考虑到可能在 images 文件夹，加个自动回退
         document.getElementById('quiz').innerHTML = `
             <div class="q-card">
                 <div class="img-container">
-                    <img src="images/${name}" onerror="this.src='${name}'; this.onerror=function(){this.parentElement.innerHTML='<small style=color:#ccc>未找到图：'+name+'</small>'};">
+                    <img src="${q.imgName}" onerror="this.src='images/${q.imgName}'; this.onerror=function(){this.parentElement.style.display='none'};">
                 </div>
                 <div class="q-text"><span class="en">${q.qEn}</span><span class="cn">${q.qCn}</span></div>
-                <div class="options">${q.options.map((o,i)=>`<div class="opt" onclick="check(${i},this)"><span style="font-weight:bold;margin-right:10px">${i+1})</span><div style="flex:1"><div>${o.en}</div><div style="color:#666;font-size:0.9rem">${o.cn}</div></div></div>`).join("")}</div>
+                <div class="options">
+                    ${q.options.map((o, i) => `<div class="opt" onclick="check(${i}, this)"><span style="font-weight:bold;margin-right:10px">${i+1})</span><div style="flex:1"><div>${o.en}</div><div style="color:#666;font-size:0.9rem">${o.cn}</div></div></div>`).join("")}
+                </div>
             </div>`;
     }
 
@@ -136,7 +144,7 @@
         if (locked) return; locked = true;
         const q = filteredData[currentIdx];
         if (i === q.ans) el.classList.add('correct');
-        else { el.classList.add('wrong'); if(q.ans!==-1) document.querySelectorAll('.opt')[q.ans].classList.add('correct'); }
+        else { el.classList.add('wrong'); if(q.ans !== -1) document.querySelectorAll('.opt')[q.ans].classList.add('correct'); }
     }
 
     function move(s) { currentIdx = (currentIdx + s + filteredData.length) % filteredData.length; render(); window.scrollTo(0,0); }
