@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="referrer" content="no-referrer">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>希腊驾照模拟 - V19 稳定版</title>
+    <title>希腊驾照模拟 - V21 最终对齐版</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     <style>
         :root { --primary: #00529b; --success: #27ae60; --error: #e74c3c; --bg: #f4f7f9; }
@@ -12,32 +12,28 @@
         
         .nav { background: var(--primary); color: white; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; position: sticky; top:0; z-index:100; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
         .nav h2 { margin: 0; font-size: 1rem; }
-        .home-btn { background: rgba(255,255,255,0.2); color: white; border: 1px solid white; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; }
+        .home-btn { background: rgba(255,255,255,0.2); color: white; border: 1px solid white; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: bold; }
 
         .container { max-width: 800px; margin: 10px auto; padding: 0 10px; padding-bottom: 120px; }
         
-        .mode-tabs { display: flex; background: white; border-radius: 12px; margin-bottom: 15px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .tab { flex: 1; padding: 12px; text-align: center; cursor: pointer; font-weight: bold; font-size: 0.9rem; color: #666; border-bottom: 3px solid transparent; }
-        .tab.active { color: var(--primary); border-bottom-color: var(--primary); background: #f0f7ff; }
+        .controls { background: white; padding: 12px; border-radius: 12px; margin-bottom: 10px; display: flex; flex-direction: column; gap: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        select { padding: 10px; border-radius: 8px; border: 1px solid #ddd; font-size: 0.95rem; }
+        
+        /* 纠错工具栏 */
+        .debug-bar { background: #fffde7; padding: 10px; border-radius: 12px; border: 1px solid #fbc02d; margin-bottom: 10px; font-size: 0.8rem; text-align: center; }
+        .debug-bar input { padding: 4px; border: 1px solid #ccc; border-radius: 4px; text-align: center; font-weight: bold; width: 80px; }
 
         .cat-list { background: white; border-radius: 15px; padding: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
         .cat-item { display: flex; flex-direction: column; padding: 15px; border-bottom: 1px solid #f0f0f0; cursor: pointer; }
-        .cat-info { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.95rem; }
-        .progress-bar { height: 6px; background: #eee; border-radius: 3px; overflow: hidden; }
+        .progress-bar { height: 6px; background: #eee; border-radius: 3px; overflow: hidden; margin-top: 8px; }
         .progress-fill { height: 100%; background: var(--success); transition: width 0.3s; }
 
-        /* 题目卡片：增加最小高度，固定图片区高度 */
         .q-card { background: white; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); padding: 20px; margin-bottom: 15px; min-height: 550px; }
         
+        /* 300px固定图片区 */
         .img-fixed-area { 
-            width: 100%; 
-            height: 300px; /* 强制固定高度 */
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            margin-bottom: 20px;
-            background: #fafafa; /* 无图时显示的空白颜色 */
-            border-radius: 10px;
+            width: 100%; height: 300px; display: flex; align-items: center; justify-content: center; 
+            margin-bottom: 20px; background: #fafafa; border-radius: 10px; border: 1px solid #eee; overflow: hidden;
         }
         .img-fixed-area img { max-width: 100%; max-height: 100%; object-fit: contain; }
 
@@ -48,34 +44,31 @@
         .opt { border: 2px solid #edf2f7; border-radius: 12px; padding: 15px; margin-bottom: 10px; cursor: pointer; background: #fff; display: flex; align-items: flex-start; }
         .opt.correct { background: #e6fffa !important; border-color: var(--success) !important; color: #22543d; font-weight: bold; }
         .opt.wrong { background: #fff5f5 !important; border-color: var(--error) !important; color: #822727; }
-        .opt-idx { font-weight: bold; margin-right: 12px; color: var(--primary); }
 
         .footer { position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 -3px 15px rgba(0,0,0,0.05); z-index:100; }
         .btn { padding: 12px 25px; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; background: var(--primary); color: white; }
         .btn-grey { background: #edf2f7; color: #4a5568; }
 
         .hidden { display: none !important; }
-        #debugPrefix { font-size: 0.7rem; background: #fffde7; padding: 8px; text-align: center; border-bottom: 1px solid #ddd; }
+        .mode-tabs { display: flex; background: white; border-radius: 12px; margin-bottom: 15px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .tab { flex: 1; padding: 12px; text-align: center; cursor: pointer; font-weight: bold; font-size: 0.9rem; color: #666; }
+        .tab.active { color: var(--primary); border-bottom: 3px solid var(--primary); background: #f0f7ff; }
     </style>
 </head>
 <body>
 
 <div class="nav">
-    <button id="backBtn" class="home-btn hidden" onclick="showDashboard()">🏠 首页</button>
+    <button id="backBtn" class="home-btn hidden" onclick="location.reload()">🏠 首页</button>
     <h2 id="navTitle">希腊驾照模拟</h2>
-    <select id="fileSelect" onchange="loadFile()" style="background:rgba(255,255,255,0.2); color:white; border:none; border-radius:4px; padding:4px;">
+    <select id="fileSelect" onchange="loadFile()">
         <option value="data.csv">汽车考题</option>
         <option value="datamoto.csv">摩托考题</option>
     </select>
 </div>
 
-<div id="debugPrefix" class="hidden">
-    图片前缀修正: <input type="text" id="manualPrefix" style="width:70px" oninput="updatePrefix()"> 
-</div>
-
 <div class="container">
     <div id="statusBox" style="text-align:center; padding:40px; background:white; border-radius:15px; margin-top:20px;">
-        <h3 id="statusText">正在同步云端题库...</h3>
+        <h3>正在载入云端数据...</h3>
     </div>
 
     <div id="mainTabs" class="mode-tabs hidden">
@@ -84,25 +77,31 @@
         <div class="tab" onclick="startExam()">模拟考试</div>
     </div>
 
+    <div id="practiceArea" class="hidden">
+        <div id="debugTools" class="debug-bar">
+            图片名汉字: <input type="text" id="manualPrefix" oninput="updateUI()">
+            + 数字: <span id="curImgNum" style="font-weight:bold; color:red"></span>
+        </div>
+        <div class="controls">
+            <select id="catSelect" onchange="onCatChange()"></select>
+        </div>
+        <div id="quizContent"></div>
+    </div>
+
     <div id="listView" class="cat-list hidden"></div>
-    <div id="quizView" class="hidden"><div id="quizContent"></div></div>
     <div id="resultView" class="hidden" style="text-align:center; padding:40px; background:white; border-radius:15px;"></div>
 </div>
 
 <div id="quizFooter" class="footer hidden">
-    <button class="btn btn-grey" onclick="moveQ(-1)">上一题</button>
-    <div id="pageInfo" style="font-weight:bold; font-size:0.85rem"></div>
-    <button class="btn" onclick="moveQ(1)">下一题</button>
+    <button class="btn btn-grey" onclick="moveQ(-1)">上题</button>
+    <div id="pageInfo" style="font-weight:bold;"></div>
+    <button class="btn" onclick="moveQ(1)">下题</button>
 </div>
 
 <script>
-    // 使用 V5 版本 KEY 强制清除旧逻辑缓存
-    const HISTORY_KEY = 'greece_history_v5';
-    const MISTAKE_KEY = 'greece_mistakes_v5';
-
     let masterData = [], currentQuestions = [], currentIdx = 0, currentMode = 'list';
-    let userHistory = JSON.parse(localStorage.getItem(HISTORY_KEY) || '{}');
-    let mistakeIds = JSON.parse(localStorage.getItem(MISTAKE_KEY) || '[]');
+    let userHistory = JSON.parse(localStorage.getItem('g_hist_v21') || '{}');
+    let mistakeIds = JSON.parse(localStorage.getItem('g_mist_v21') || '[]');
 
     window.onload = loadFile;
 
@@ -110,10 +109,7 @@
         const file = document.getElementById('fileSelect').value;
         Papa.parse(file, {
             download: true, skipEmptyLines: true,
-            complete: (res) => {
-                parseCSV(res.data);
-                showDashboard();
-            }
+            complete: (res) => { parseCSV(res.data); showDashboard(); }
         });
     }
 
@@ -123,17 +119,15 @@
             let catCn = data[0][col+1] || "";
             if (!data[0][col]) continue;
             let imgPrefix = catCn.split("专题")[0].trim();
-            let qCounter = 1;
             for (let row = 1; row < data.length; row++) {
                 if (data[row][col] && data[row][col].trim().length > 5) {
                     const q = splitLogic(data[row][col], data[row][col+1]);
                     if (q) {
                         q.cat = catCn.trim();
                         q.prefix = imgPrefix;
-                        q.num = qCounter;
-                        q.uid = catCn + "_" + qCounter;
+                        q.rowNum = row; // 关键：直接记录 CSV 数组的索引号
+                        q.uid = catCn + "_" + row;
                         masterData.push(q);
-                        qCounter++;
                     }
                 }
             }
@@ -154,17 +148,13 @@
 
     function showDashboard() {
         currentMode = 'list';
-        document.getElementById('navTitle').innerText = "希腊驾照模拟";
         document.getElementById('statusBox').classList.add('hidden');
         document.getElementById('mainTabs').classList.remove('hidden');
         document.getElementById('listView').classList.remove('hidden');
-        document.getElementById('quizView').classList.add('hidden');
+        document.getElementById('practiceArea').classList.add('hidden');
         document.getElementById('quizFooter').classList.add('hidden');
-        document.getElementById('resultView').classList.add('hidden');
-        document.getElementById('debugPrefix').classList.add('hidden');
         document.getElementById('backBtn').classList.add('hidden');
         document.getElementById('tab-list').className = 'tab active';
-        document.getElementById('tab-mistake').className = 'tab';
         document.getElementById('tab-mistake').innerText = `错题本 (${mistakeIds.length})`;
 
         const cats = [...new Set(masterData.map(d => d.cat))];
@@ -174,7 +164,7 @@
             const done = list.filter(d => userHistory[d.uid]).length;
             const perc = Math.round((done / list.length) * 100);
             html += `<div class="cat-item" onclick="startPractice('${c}')">
-                <div class="cat-info"><b>${c}</b><span>${done}/${list.length}</span></div>
+                <div style="display:flex; justify-content:space-between"><b>${c}</b><span>${done}/${list.length}</span></div>
                 <div class="progress-bar"><div class="progress-fill" style="width:${perc}%"></div></div>
             </div>`;
         });
@@ -186,12 +176,80 @@
         currentQuestions = masterData.filter(d => d.cat === cat);
         currentIdx = 0;
         enterQuiz();
+        const cats = [...new Set(masterData.map(d => d.cat))];
+        document.getElementById('catSelect').innerHTML = cats.map(c => `<option value="${c}" ${c===cat?'selected':''}>${c}</option>`).join("");
+    }
+
+    function enterQuiz() {
+        document.getElementById('listView').classList.add('hidden');
+        document.getElementById('mainTabs').classList.add('hidden');
+        document.getElementById('practiceArea').classList.remove('hidden');
+        document.getElementById('quizFooter').classList.remove('hidden');
+        document.getElementById('backBtn').classList.remove('hidden');
+        updateUI();
+    }
+
+    function updateUI() {
+        const q = currentQuestions[currentIdx];
+        const isAnswered = q.userAns !== undefined;
+        document.getElementById('pageInfo').innerText = `${currentIdx + 1} / ${currentQuestions.length}`;
+        
+        // 关键修正逻辑：图片 ID 就是 行号 (q.rowNum)
+        const finalImgNum = q.rowNum; 
+        document.getElementById('curImgNum').innerText = finalImgNum;
+        
+        const pf = document.getElementById('manualPrefix').value || q.prefix;
+        const fileName = encodeURI(pf + finalImgNum + ".jpg");
+
+        document.getElementById('quizContent').innerHTML = `
+            <div class="q-card">
+                <div class="img-fixed-area">
+                    <img src="${fileName}" onerror="this.src='images/${fileName}'; this.onerror=function(){this.style.display='none'}">
+                </div>
+                <div class="q-text"><span class="en">${q.qEn}</span><span class="cn">${q.qCn}</span></div>
+                <div class="options">
+                    ${q.options.map((o, i) => {
+                        let cls = isAnswered ? (i === q.ans ? "correct" : (i === q.userAns ? "wrong" : "")) : "";
+                        return `<div class="opt ${cls}" onclick="handleCheck(${i})">
+                            <span style="font-weight:bold;margin-right:10px">${i+1})</span>
+                            <div style="flex:1"><div>${o.en}</div><div style="color:#666;font-size:0.9rem">${o.cn}</div></div>
+                        </div>`;
+                    }).join("")}
+                </div>
+            </div>`;
+    }
+
+    function handleCheck(idx) {
+        const q = currentQuestions[currentIdx];
+        if (q.userAns !== undefined) return;
+        q.userAns = idx;
+        if (idx === q.ans) {
+            userHistory[q.uid] = true;
+            localStorage.setItem('g_hist_v21', JSON.stringify(userHistory));
+        } else {
+            if (!mistakeIds.includes(q.uid)) {
+                mistakeIds.push(q.uid);
+                localStorage.setItem('g_mist_v21', JSON.stringify(mistakeIds));
+            }
+        }
+        updateUI();
+    }
+
+    function moveQ(s) {
+        if (currentMode === 'exam' && currentIdx === currentQuestions.length - 1 && s > 0) return finishExam();
+        currentIdx = (currentIdx + s + currentQuestions.length) % currentQuestions.length;
+        updateUI();
+        window.scrollTo(0,0);
+    }
+
+    function onCatChange() {
+        startPractice(document.getElementById('catSelect').value);
     }
 
     function startMistakes() {
         currentMode = 'mistake';
         currentQuestions = masterData.filter(d => mistakeIds.includes(d.uid));
-        if(currentQuestions.length === 0) return alert("暂无错题！");
+        if(currentQuestions.length === 0) return alert("没找到错题！");
         currentIdx = 0;
         enterQuiz();
     }
@@ -204,102 +262,20 @@
         enterQuiz();
     }
 
-    function enterQuiz() {
-        document.getElementById('listView').classList.add('hidden');
-        document.getElementById('mainTabs').classList.add('hidden');
-        document.getElementById('backBtn').classList.remove('hidden');
-        document.getElementById('quizView').classList.remove('hidden');
-        document.getElementById('quizFooter').classList.remove('hidden');
-        document.getElementById('debugPrefix').classList.remove('hidden');
-        renderQuestion();
-    }
-
-    function renderQuestion() {
-        const q = currentQuestions[currentIdx];
-        const isAnswered = q.userAns !== undefined;
-        document.getElementById('navTitle').innerText = q.cat.split('(')[0];
-        document.getElementById('pageInfo').innerText = `${currentIdx + 1} / ${currentQuestions.length}`;
-        document.getElementById('manualPrefix').value = q.prefix;
-
-        const fileName = encodeURI(q.prefix + q.num + ".jpg");
-
-        let html = `
-            <div class="q-card">
-                <div class="img-fixed-area">
-                    <img id="qImg" src="${fileName}" 
-                         onload="this.style.display='block'" 
-                         onerror="trySub(this, '${fileName}')">
-                </div>
-                <div class="q-text"><span class="en">${q.qEn}</span><span class="cn">${q.qCn}</span></div>
-                <div class="options">
-                    ${q.options.map((o, i) => {
-                        let cls = isAnswered ? (i === q.ans ? "correct" : (i === q.userAns ? "wrong" : "")) : "";
-                        return `<div class="opt ${cls}" onclick="handleCheck(${i})">
-                            <span class="opt-idx">${i+1})</span>
-                            <div style="flex:1"><div>${o.en}</div><div style="color:#666;font-size:0.9rem">${o.cn}</div></div>
-                        </div>`;
-                    }).join("")}
-                </div>
-            </div>`;
-        document.getElementById('quizContent').innerHTML = html;
-    }
-
-    function trySub(img, encoded) {
-        if (!img.dataset.tried) {
-            img.dataset.tried = "true";
-            img.src = "images/" + encoded;
-        } else {
-            img.style.display = 'none'; // 彻底加载不到图，隐藏图片标签，保留父容器高度
-        }
-    }
-
-    function handleCheck(idx) {
-        const q = currentQuestions[currentIdx];
-        if (q.userAns !== undefined) return;
-        
-        q.userAns = idx;
-        if (idx === q.ans) {
-            userHistory[q.uid] = true;
-            localStorage.setItem(HISTORY_KEY, JSON.stringify(userHistory));
-        } else {
-            if (!mistakeIds.includes(q.uid)) {
-                mistakeIds.push(q.uid);
-                localStorage.setItem(MISTAKE_KEY, JSON.stringify(mistakeIds));
-            }
-        }
-        renderQuestion();
-        
-        // 【注意】这里删除了所有 setTimeout 自动跳转代码。
-        // 现在点击完答案后，必须手动点击底部的“下一题”。
-    }
-
-    function moveQ(s) {
-        if (currentMode === 'exam' && currentIdx === currentQuestions.length - 1 && s > 0) return finishExam();
-        currentIdx = (currentIdx + s + currentQuestions.length) % currentQuestions.length;
-        renderQuestion();
-        window.scrollTo(0,0);
-    }
-
     function finishExam() {
         const score = currentQuestions.filter(q => q.userAns === q.ans).length;
-        document.getElementById('quizView').classList.add('hidden');
+        document.getElementById('practiceArea').classList.add('hidden');
         document.getElementById('quizFooter').classList.add('hidden');
-        document.getElementById('debugPrefix').classList.add('hidden');
         const rv = document.getElementById('resultView');
         rv.classList.remove('hidden');
         rv.innerHTML = `<div style="font-size:3rem; font-weight:bold; color:var(--primary)">${score}/30</div>
             <h2>${score >= 29 ? '🎉 恭喜通过！' : '❌ 未及格'}</h2>
-            <button class="btn" style="margin-top:20px" onclick="showDashboard()">返回首页</button>`;
+            <button class="btn" style="margin-top:20px" onclick="location.reload()">返回首页</button>`;
     }
 
     function switchTab(t) {
-        if (t === 'list') showDashboard();
-        else startMode('mistake');
-    }
-
-    function updatePrefix() {
-        currentQuestions[currentIdx].prefix = document.getElementById('manualPrefix').value;
-        renderQuestion();
+        if (t === 'list') location.reload();
+        else startMistakes();
     }
 </script>
 </body>
