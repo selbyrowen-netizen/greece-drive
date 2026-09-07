@@ -4,59 +4,81 @@
     <meta charset="UTF-8">
     <meta name="referrer" content="no-referrer">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>希腊驾照模拟 - V22 分栏版</title>
+    <title>希腊驾照模拟 - V23 智能版</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     <style>
-        :root { --primary: #00529b; --success: #27ae60; --error: #e74c3c; --bg: #f4f7f9; }
+        :root { --primary: #00529b; --success: #27ae60; --error: #e74c3c; --bg: #f0f2f5; }
         body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); margin: 0; padding: 0; user-select: none; }
         
-        /* 导航 */
-        .nav { background: var(--primary); color: white; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; position: sticky; top:0; z-index:100; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        /* 导航栏 */
+        .nav { background: var(--primary); color: white; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; position: sticky; top:0; z-index:100; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
         .nav h2 { margin: 0; font-size: 1rem; }
-        .home-btn { background: rgba(255,255,255,0.2); color: white; border: 1px solid white; padding: 5px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; }
+        .home-btn { background: rgba(255,255,255,0.2); color: white; border: 1px solid white; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: bold; }
 
-        .container { max-width: 1000px; margin: 10px auto; padding: 0 10px; padding-bottom: 100px; }
+        .container { max-width: 1100px; margin: 10px auto; padding: 0 10px; padding-bottom: 120px; }
         
         /* 选项卡 */
-        .mode-tabs { display: flex; background: white; border-radius: 10px; margin-bottom: 10px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .tab { flex: 1; padding: 10px; text-align: center; cursor: pointer; font-weight: bold; font-size: 0.9rem; color: #666; }
+        .mode-tabs { display: flex; background: white; border-radius: 12px; margin-bottom: 15px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .tab { flex: 1; padding: 12px; text-align: center; cursor: pointer; font-weight: bold; font-size: 0.9rem; color: #666; }
         .tab.active { color: var(--primary); border-bottom: 3px solid var(--primary); background: #f0f7ff; }
 
-        /* 列表页 */
-        .cat-list { background: white; border-radius: 12px; padding: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        .cat-item { display: flex; flex-direction: column; padding: 12px; border-bottom: 1px solid #f0f0f0; cursor: pointer; }
-        .progress-bar { height: 5px; background: #eee; border-radius: 3px; overflow: hidden; margin-top: 5px; }
+        /* 专题列表 */
+        .cat-list { background: white; border-radius: 15px; padding: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .cat-item { display: flex; flex-direction: column; padding: 15px; border-bottom: 1px solid #f0f0f0; cursor: pointer; }
+        .progress-bar { height: 6px; background: #eee; border-radius: 3px; overflow: hidden; margin-top: 8px; }
         .progress-fill { height: 100%; background: var(--success); transition: width 0.3s; }
 
-        /* 核心：左右分栏布局 */
-        .q-card { background: white; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); padding: 20px; display: flex; gap: 20px; min-height: 450px; }
-        
-        /* 左侧文字区 */
-        .q-content-left { flex: 1.2; display: flex; flex-direction: column; }
-        /* 右侧图片区 */
-        .q-image-right { flex: 1; height: 400px; background: #fafafa; border: 1px solid #eee; border-radius: 10px; display: flex; align-items: center; justify-content: center; position: sticky; top: 70px; }
-        .q-image-right img { max-width: 95%; max-height: 95%; object-fit: contain; }
+        /* 核心题目卡片容器 */
+        .q-card { 
+            background: white; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); 
+            padding: 25px; margin-bottom: 15px; 
+            display: flex; gap: 30px; min-height: 400px;
+        }
 
-        .q-text { border-left: 5px solid var(--primary); padding-left: 12px; margin-bottom: 15px; }
-        .en { font-size: 1.05rem; font-weight: bold; color: #2d3748; display: block; margin-bottom: 4px; line-height: 1.3; }
-        .cn { font-size: 1rem; color: #16a085; display: block; line-height: 1.3; }
+        /* 文本区域 */
+        .q-text-section { flex: 1.5; order: 1; }
+        /* 图片区域 */
+        .q-img-section { 
+            flex: 1; order: 2; 
+            display: none; /* 默认隐藏，有图才显示 */
+            align-items: center; justify-content: center; 
+            background: #fafafa; border-radius: 15px; border: 1px solid #eee;
+            padding: 10px; max-height: 400px;
+        }
+        .q-img-section img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 8px; }
 
-        .opt { border: 2px solid #edf2f7; border-radius: 10px; padding: 12px; margin-bottom: 8px; cursor: pointer; background: #fff; font-size: 0.9rem; transition: 0.1s; }
+        /* 文本样式 */
+        .q-header { border-left: 6px solid var(--primary); padding-left: 15px; margin-bottom: 25px; }
+        .en { font-size: 1.15rem; font-weight: bold; color: #2d3748; display: block; margin-bottom: 6px; line-height: 1.4; }
+        .cn { font-size: 1.1rem; color: #16a085; display: block; line-height: 1.4; }
+
+        /* 选项样式 */
+        .opt { border: 2px solid #edf2f7; border-radius: 12px; padding: 15px; margin-bottom: 12px; cursor: pointer; background: #fff; transition: 0.1s; display: flex; align-items: flex-start; }
+        .opt:hover:not(.locked) { border-color: var(--primary); background: #f8fbff; }
         .opt.correct { background: #e6fffa !important; border-color: var(--success) !important; color: #22543d; font-weight: bold; }
         .opt.wrong { background: #fff5f5 !important; border-color: var(--error) !important; color: #822727; }
+        .opt-idx { font-weight: bold; margin-right: 12px; color: var(--primary); }
 
-        /* 底部导航 */
-        .footer { position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 10px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 -3px 15px rgba(0,0,0,0.05); z-index:100; }
-        .btn { padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; background: var(--primary); color: white; }
+        /* 底部操作 */
+        .footer { position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 -3px 15px rgba(0,0,0,0.05); z-index:100; }
+        .btn { padding: 12px 30px; border: none; border-radius: 12px; cursor: pointer; font-weight: bold; background: var(--primary); color: white; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         .btn-grey { background: #edf2f7; color: #4a5568; }
+
+        /* 调试栏 */
+        .debug-bar { background: #fffde7; padding: 8px; font-size: 0.75rem; border-radius: 10px; margin-bottom: 10px; border: 1px solid #fbc02d; text-align: center; }
+        .debug-bar input { padding: 4px; border: 1px solid #ccc; border-radius: 4px; text-align: center; width: 80px; }
 
         .hidden { display: none !important; }
 
-        /* 手机端适配：切回上下堆叠 */
+        /* --- 响应式手机端布局 (768px以下) --- */
         @media (max-width: 768px) {
-            .q-card { flex-direction: column; min-height: auto; }
-            .q-image-right { height: 250px; order: -1; position: relative; top: 0; }
-            .container { padding-bottom: 150px; }
+            .q-card { flex-direction: column; padding: 15px; gap: 15px; min-height: auto; }
+            /* 手机端图片排在文字前面 */
+            .q-img-section { order: -1; flex: none; height: auto; min-height: 100px; max-height: 250px; width: 100%; }
+            .q-text-section { order: 1; flex: none; width: 100%; }
+            .en { font-size: 1.05rem; }
+            .cn { font-size: 1rem; }
+            .opt { padding: 12px; }
         }
     </style>
 </head>
@@ -73,22 +95,20 @@
 
 <div class="container">
     <div id="statusBox" style="text-align:center; padding:40px; background:white; border-radius:15px; margin-top:20px;">
-        <h3>正在载入云端数据...</h3>
+        <h3>正在连接云端数据...</h3>
     </div>
 
     <div id="mainTabs" class="mode-tabs hidden">
-        <div id="tab-list" class="tab active" onclick="switchTab('list')">全部专题</div>
+        <div id="tab-list" class="tab active" onclick="switchTab('list')">专题列表</div>
         <div id="tab-mistake" class="tab" onclick="switchTab('mistake')">错题本</div>
         <div class="tab" onclick="startExam()">模拟考试</div>
     </div>
 
-    <!-- 练习区 -->
     <div id="practiceArea" class="hidden">
-        <div style="background:#fffde7; padding:8px; font-size:0.75rem; border-radius:8px; margin-bottom:10px; display:flex; gap:10px; align-items:center; border:1px solid #fbc02d">
-            <span>图片修正:</span><input type="text" id="manualPrefix" style="width:70px; border:1px solid #ccc; padding:2px" oninput="updateUI()">
-            <span>序号: <b id="curImgNum" style="color:red"></b></span>
+        <div class="debug-bar">
+            图片修正: <input type="text" id="manualPrefix" oninput="updateUI()">
+            + 题号: <b id="curImgNum" style="color:red"></b>
         </div>
-        
         <div id="quizContent"></div>
     </div>
 
@@ -98,13 +118,13 @@
 
 <div id="quizFooter" class="footer hidden">
     <button class="btn btn-grey" onclick="moveQ(-1)">上题</button>
-    <div id="pageInfo" style="font-weight:bold; font-size:0.85rem"></div>
+    <div id="pageInfo" style="font-weight:bold; font-size:0.9rem"></div>
     <button class="btn" onclick="moveQ(1)">下题</button>
 </div>
 
 <script>
-    const HISTORY_KEY = 'g_hist_v22';
-    const MISTAKE_KEY = 'g_mist_v22';
+    const HISTORY_KEY = 'g_hist_v23';
+    const MISTAKE_KEY = 'g_mist_v23';
 
     let masterData = [], currentQuestions = [], currentIdx = 0, currentMode = 'list';
     let userHistory = JSON.parse(localStorage.getItem(HISTORY_KEY) || '{}');
@@ -197,7 +217,6 @@
     function updateUI() {
         const q = currentQuestions[currentIdx];
         const isAnswered = q.userAns !== undefined;
-        document.getElementById('navTitle').innerText = q.cat.split('(')[0];
         document.getElementById('pageInfo').innerText = `${currentIdx + 1} / ${currentQuestions.length}`;
         document.getElementById('curImgNum').innerText = q.rowNum;
 
@@ -206,9 +225,9 @@
 
         document.getElementById('quizContent').innerHTML = `
             <div class="q-card">
-                <!-- 左侧：题目和选项 -->
-                <div class="q-content-left">
-                    <div class="q-text">
+                <!-- 文本区域 -->
+                <div class="q-text-section">
+                    <div class="q-header">
                         <span class="en">${q.qEn}</span>
                         <span class="cn">${q.qCn}</span>
                     </div>
@@ -216,17 +235,29 @@
                         ${q.options.map((o, i) => {
                             let cls = isAnswered ? (i === q.ans ? "correct" : (i === q.userAns ? "wrong" : "")) : "";
                             return `<div class="opt ${cls}" onclick="handleCheck(${i})">
-                                <span style="font-weight:bold;margin-right:10px">${i+1})</span>
+                                <span class="opt-idx">${i+1})</span>
                                 <div style="flex:1"><div>${o.en}</div><div style="color:#666;font-size:0.85rem">${o.cn}</div></div>
                             </div>`;
                         }).join("")}
                     </div>
                 </div>
-                <!-- 右侧：固定图片区 -->
-                <div class="q-image-right">
-                    <img src="${fileName}" onerror="this.src='images/${fileName}'; this.onerror=function(){this.style.display='none'}">
+                <!-- 图片区域：默认隐藏，只有 onload 触发后才展示 -->
+                <div class="q-img-section" id="imgBox">
+                    <img id="qImg" src="${fileName}" 
+                         onload="this.parentElement.style.display='flex'" 
+                         onerror="trySubV23(this, '${fileName}')">
                 </div>
             </div>`;
+    }
+
+    function trySubV23(img, encoded) {
+        if (!img.dataset.tried) {
+            img.dataset.tried = "true";
+            img.src = "images/" + encoded;
+        } else {
+            // 彻底找不到图：隐藏容器，不占位
+            img.parentElement.style.display = 'none';
+        }
     }
 
     function handleCheck(idx) {
@@ -282,6 +313,11 @@
     function switchTab(t) {
         if (t === 'list') location.reload();
         else startMistakes();
+    }
+
+    function updatePrefix() {
+        currentQuestions[currentIdx].prefix = document.getElementById('manualPrefix').value;
+        updateUI();
     }
 </script>
 </body>
