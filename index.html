@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="referrer" content="no-referrer">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>希腊驾照模拟 - V27 智能匹配版</title>
+    <title>希腊驾照模拟 - V28 逻辑精准版</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     <style>
         :root { --primary: #00529b; --success: #27ae60; --error: #e74c3c; --bg: #f4f7f9; --tip-bg: #fff9db; --tip-border: #fab005; }
@@ -27,8 +27,8 @@
         .q-header { border-left: 6px solid var(--primary); padding-left: 15px; margin-bottom: 25px; }
         .en { font-size: 1.1rem; font-weight: bold; color: #2d3748; display: block; margin-bottom: 5px; line-height: 1.4; }
         .cn { font-size: 1.05rem; color: #16a085; display: block; line-height: 1.4; }
-        .tip-card { background: var(--tip-bg); border-left: 5px solid var(--tip-border); padding: 15px; margin-top: 20px; border-radius: 8px; font-size: 0.95rem; color: #856404; line-height: 1.6; }
-        .tip-card b { display: block; margin-bottom: 5px; font-size: 1rem; color: #d32f2f; }
+        .tip-card { background: var(--tip-bg); border-left: 5px solid var(--tip-border); padding: 12px; margin-top: 15px; border-radius: 8px; font-size: 0.9rem; color: #856404; line-height: 1.5; }
+        .tip-card b { color: #d32f2f; margin-right: 5px; }
         .opt { border: 2px solid #edf2f7; border-radius: 12px; padding: 15px; margin-bottom: 10px; cursor: pointer; background: #fff; display: flex; align-items: flex-start; transition: 0.1s; }
         .opt.correct { background: #e6fffa !important; border-color: var(--success) !important; color: #22543d; font-weight: bold; }
         .opt.wrong { background: #fff5f5 !important; border-color: var(--error) !important; color: #822727; }
@@ -52,21 +52,16 @@
 
 <div class="container">
     <div id="statusBox" style="text-align:center; padding:40px; background:white; border-radius:15px; margin-top:20px;">
-        <h3>正在同步知识点匹配引擎...</h3>
+        <h3>正在优化秘籍匹配逻辑...</h3>
     </div>
-
     <div id="mainTabs" class="mode-tabs hidden">
-        <div id="tab-list" class="tab active" onclick="switchTab('list')">专题列表</div>
+        <div id="tab-list" class="tab active" onclick="switchTab('list')">全部专题</div>
         <div id="tab-mistake" class="tab" onclick="switchTab('mistake')">错题本</div>
         <div class="tab" onclick="startExam()">模拟考试</div>
     </div>
-
-    <div id="practiceArea" class="hidden">
-        <div id="quizContent"></div>
-    </div>
-
+    <div id="practiceArea" class="hidden"><div id="quizContent"></div></div>
     <div id="listView" class="cat-list hidden"></div>
-    <div id="resultView" class="hidden" style="text-align:center; padding:40px; background:white; border-radius:15px;"></div>
+    <div id="resultView" class="hidden"></div>
 </div>
 
 <div id="quizFooter" class="footer hidden">
@@ -76,49 +71,42 @@
 </div>
 
 <script>
-    const HISTORY_KEY = 'g_hist_v27';
-    const MISTAKE_KEY = 'g_mist_v27';
+    const HISTORY_KEY = 'g_hist_v28';
+    const MISTAKE_KEY = 'g_mist_v28';
 
     let masterData = [], currentQuestions = [], currentIdx = 0, currentMode = 'list';
-    let topicTipsPool = {}; // 存储每个专题的所有总结秘籍
+    let topicTipsPool = {}; 
     let userHistory = JSON.parse(localStorage.getItem(HISTORY_KEY) || '{}');
     let mistakeIds = JSON.parse(localStorage.getItem(MISTAKE_KEY) || '[]');
 
-    // 匹配引擎关键词定义
-    const matchRules = [
-        { key: ["reaction", "反应"], tipKey: "反应距离" },
-        { key: ["stopping distance", "停车距离", "empirical", "经验法则"], tipKey: "停车距离" },
-        { key: ["rain", "下雨", "wet", "潮湿", "seconds"], tipKey: "雨天" },
-        { key: ["alcohol", "酒精", "drunk", "饮酒"], tipKey: "酒精" },
-        { key: ["speed", "车速", "limit", "限速"], tipKey: "车速" },
-        { key: ["tyre", "轮胎", "pressure", "气压"], tipKey: "轮胎" },
-        { key: ["overtake", "超车"], tipKey: "超车" }
+    // --- 智能秘籍匹配规则库 ---
+    const secretRules = [
+        { tags: ["reaction", "反应", "50", "90", "100"], match: "反应距离" },
+        { tags: ["stopping", "停车", "50", "90", "100", "empirical"], match: "经验法则" },
+        { tags: ["rain", "下雨", "wet", "潮湿", "seconds"], match: "雨天" },
+        { tags: ["double", "翻倍", "quadruples", "4倍"], match: "速度翻倍" },
+        { tags: ["alcohol", "酒精", "drunk"], match: "酒精" },
+        { tags: ["tyre", "轮胎", "pressure", "气压"], match: "轮胎" }
     ];
 
     window.onload = loadFile;
 
     function loadFile() {
-        const file = document.getElementById('fileSelect').value;
-        Papa.parse(file, {
+        Papa.parse(document.getElementById('fileSelect').value, {
             download: true, skipEmptyLines: true,
             complete: (res) => { parseCSV(res.data); showDashboard(); }
         });
     }
 
     function parseCSV(data) {
-        masterData = [];
-        topicTipsPool = {}; 
-
+        masterData = []; topicTipsPool = {};
         for (let col = 0; col < data[0].length; col += 3) {
             let catCn = data[0][col+1] || "";
             if (!data[0][col]) continue;
             topicTipsPool[catCn] = [];
-
-            let qCounter = 1;
             for (let row = 1; row < data.length; row++) {
                 let cellEn = data[row][col], cellCn = data[row][col+1];
                 if (!cellEn || cellEn.trim().length < 5) continue;
-
                 if (cellEn.includes("1)")) {
                     const q = splitLogic(cellEn, cellCn);
                     if (q) {
@@ -129,7 +117,6 @@
                         masterData.push(q);
                     }
                 } else {
-                    // 如果不是题目，将其存入该专题的“秘籍池”
                     topicTipsPool[catCn].push({ en: cellEn.trim(), cn: cellCn ? cellCn.trim() : "" });
                 }
             }
@@ -153,36 +140,30 @@
         if(!q) return;
         const isAnswered = q.userAns !== undefined;
         document.getElementById('pageInfo').innerText = `${currentIdx + 1} / ${currentQuestions.length}`;
-        
         const fileName = encodeURI(q.prefix + q.rowNum + ".jpg");
 
-        // --- 核心：智能匹配总结逻辑 ---
+        // --- 核心改进：双重过滤匹配逻辑 ---
         let matchedTips = [];
         if (currentMode !== 'exam') {
             const pool = topicTipsPool[q.cat] || [];
-            const fullText = (q.qEn + q.qCn).toLowerCase();
+            const qText = (q.qEn + q.qCn).toLowerCase();
 
             pool.forEach(tip => {
-                // 逻辑 A：如果题目里包含秘籍文字开头的词（比如秘籍叫“反应距离...”，题目包含“反应”）
-                // 我们取秘籍中文前 4 个字作为搜索词
-                const keyword = tip.cn.substring(0, 4);
-                if (fullText.includes(keyword.toLowerCase())) {
-                    matchedTips.push(tip);
-                }
-                // 逻辑 B：根据预设的 matchRules 匹配
-                matchRules.forEach(rule => {
-                    if (tip.cn.includes(rule.tipKey)) {
-                        rule.key.forEach(k => {
-                            if (fullText.includes(k.toLowerCase()) && !matchedTips.includes(tip)) {
-                                matchedTips.push(tip);
-                            }
-                        });
+                // 只要秘籍里包含某些核心词，且题目也包含对应词，就匹配
+                secretRules.forEach(rule => {
+                    // 如果这条秘籍属于这个规则（比如秘籍里有“反应距离”）
+                    if (tip.cn.includes(rule.match)) {
+                        // 检查题目是否命中任何一个标签（比如题目有“50”或“reaction”）
+                        const isHit = rule.tags.some(tag => qText.includes(tag.toLowerCase()));
+                        if (isHit && !matchedTips.includes(tip)) {
+                            matchedTips.push(tip);
+                        }
                     }
                 });
             });
         }
 
-        let tipHtml = matchedTips.map(t => `<div class="tip-card"><b>💡 秘籍匹配：</b>${t.cn}</div>`).join("");
+        let tipHtml = matchedTips.map(t => `<div class="tip-card"><b>💡 秘籍：</b>${t.cn}</div>`).join("");
 
         document.getElementById('quizContent').innerHTML = `
             <div class="q-card">
@@ -200,23 +181,16 @@
                     ${tipHtml}
                 </div>
                 <div class="q-img-section">
-                    <img id="qImg" src="${fileName}" onload="this.parentElement.style.display='flex'" onerror="trySubV27(this, '${fileName}')">
+                    <img id="qImg" src="${fileName}" onload="this.parentElement.style.display='flex'" onerror="trySubV28(this, '${fileName}')">
                 </div>
             </div>`;
     }
 
-    function trySubV27(img, encoded) {
-        if (!img.dataset.tried) {
-            img.dataset.tried = "true";
-            img.src = "images/" + encoded;
-        } else {
-            img.style.display = 'none';
-            img.parentElement.classList.add('no-img');
-            if (window.innerWidth <= 768) img.parentElement.style.display = 'none';
-        }
+    function trySubV28(img, encoded) {
+        if (!img.dataset.tried) { img.dataset.tried = "true"; img.src = "images/" + encoded; }
+        else { img.style.display = 'none'; img.parentElement.style.display = (window.innerWidth > 768) ? 'flex' : 'none'; }
     }
 
-    // 其余基础功能保持不变...
     function showDashboard() {
         currentMode = 'list';
         document.getElementById('statusBox').classList.add('hidden');
@@ -225,8 +199,6 @@
         document.getElementById('practiceArea').classList.add('hidden');
         document.getElementById('quizFooter').classList.add('hidden');
         document.getElementById('backBtn').classList.add('hidden');
-        document.getElementById('tab-list').className = 'tab active';
-        document.getElementById('tab-mistake').innerText = `错题本 (${mistakeIds.length})`;
         const cats = [...new Set(masterData.map(d => d.cat))];
         let html = "";
         cats.forEach(c => {
@@ -237,6 +209,7 @@
         });
         document.getElementById('listView').innerHTML = html;
     }
+
     function startPractice(cat) { currentMode = 'practice'; currentQuestions = masterData.filter(d => d.cat === cat); currentIdx = 0; enterQuiz(); }
     function enterQuiz() { document.getElementById('listView').classList.add('hidden'); document.getElementById('mainTabs').classList.add('hidden'); document.getElementById('practiceArea').classList.remove('hidden'); document.getElementById('quizFooter').classList.remove('hidden'); document.getElementById('backBtn').classList.remove('hidden'); renderQuestion(); }
     function handleCheck(idx) {
