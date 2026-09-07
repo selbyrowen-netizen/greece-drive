@@ -4,79 +4,39 @@
     <meta charset="UTF-8">
     <meta name="referrer" content="no-referrer">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>希腊驾照模拟 - V24 比例锁定版</title>
+    <title>希腊驾照模拟 - V27 智能匹配版</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     <style>
-        :root { --primary: #00529b; --success: #27ae60; --error: #e74c3c; --bg: #f4f7f9; }
+        :root { --primary: #00529b; --success: #27ae60; --error: #e74c3c; --bg: #f4f7f9; --tip-bg: #fff9db; --tip-border: #fab005; }
         body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); margin: 0; padding: 0; user-select: none; }
-        
-        /* 导航栏 */
         .nav { background: var(--primary); color: white; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; position: sticky; top:0; z-index:100; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
         .nav h2 { margin: 0; font-size: 1rem; }
         .home-btn { background: rgba(255,255,255,0.2); color: white; border: 1px solid white; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: bold; }
-
         .container { max-width: 1100px; margin: 10px auto; padding: 0 10px; padding-bottom: 120px; }
-        
         .mode-tabs { display: flex; background: white; border-radius: 12px; margin-bottom: 15px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .tab { flex: 1; padding: 12px; text-align: center; cursor: pointer; font-weight: bold; font-size: 0.9rem; color: #666; }
-        .tab.active { color: var(--primary); border-bottom: 3px solid var(--primary); background: #f0f7ff; }
-
+        .tab { flex: 1; padding: 12px; text-align: center; cursor: pointer; font-weight: bold; font-size: 0.9rem; color: #666; border-bottom: 3px solid transparent; }
+        .tab.active { color: var(--primary); border-bottom-color: var(--primary); background: #f0f7ff; }
         .cat-list { background: white; border-radius: 15px; padding: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
         .cat-item { display: flex; flex-direction: column; padding: 15px; border-bottom: 1px solid #f0f0f0; cursor: pointer; }
         .progress-bar { height: 6px; background: #eee; border-radius: 3px; overflow: hidden; margin-top: 8px; }
         .progress-fill { height: 100%; background: var(--success); transition: width 0.3s; }
-
-        /* --- 核心：比例锁死的题目卡片 --- */
-        .q-card { 
-            background: white; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); 
-            padding: 25px; margin-bottom: 15px; 
-            display: grid; /* 使用 Grid 网格布局 */
-            grid-template-columns: 1.5fr 1fr; /* 电脑端强制 60% : 40% 分栏 */
-            gap: 30px;
-            min-height: 450px;
-        }
-
-        /* 文本区域 */
+        .q-card { background: white; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); padding: 25px; margin-bottom: 15px; display: grid; grid-template-columns: 1.5fr 1fr; gap: 30px; min-height: 450px; }
         .q-text-section { grid-column: 1; }
-        /* 图片占位区域 */
-        .q-img-section { 
-            grid-column: 2;
-            display: flex; 
-            align-items: center; justify-content: center; 
-            background: #fafafa; border-radius: 15px; border: 1px solid #eee;
-            padding: 10px; height: 350px; 
-            position: sticky; top: 70px;
-        }
+        .q-img-section { grid-column: 2; display: flex; align-items: center; justify-content: center; background: #fafafa; border-radius: 15px; border: 1px solid #eee; padding: 10px; height: 350px; position: sticky; top: 70px; }
         .q-img-section img { max-width: 100%; max-height: 100%; object-fit: contain; }
-
         .q-header { border-left: 6px solid var(--primary); padding-left: 15px; margin-bottom: 25px; }
-        .en { font-size: 1.1rem; font-weight: bold; color: #2d3748; display: block; margin-bottom: 6px; line-height: 1.4; }
+        .en { font-size: 1.1rem; font-weight: bold; color: #2d3748; display: block; margin-bottom: 5px; line-height: 1.4; }
         .cn { font-size: 1.05rem; color: #16a085; display: block; line-height: 1.4; }
-
-        .opt { border: 2px solid #edf2f7; border-radius: 12px; padding: 15px; margin-bottom: 12px; cursor: pointer; background: #fff; display: flex; align-items: flex-start; }
+        .tip-card { background: var(--tip-bg); border-left: 5px solid var(--tip-border); padding: 15px; margin-top: 20px; border-radius: 8px; font-size: 0.95rem; color: #856404; line-height: 1.6; }
+        .tip-card b { display: block; margin-bottom: 5px; font-size: 1rem; color: #d32f2f; }
+        .opt { border: 2px solid #edf2f7; border-radius: 12px; padding: 15px; margin-bottom: 10px; cursor: pointer; background: #fff; display: flex; align-items: flex-start; transition: 0.1s; }
         .opt.correct { background: #e6fffa !important; border-color: var(--success) !important; color: #22543d; font-weight: bold; }
         .opt.wrong { background: #fff5f5 !important; border-color: var(--error) !important; color: #822727; }
-        .opt-idx { font-weight: bold; margin-right: 12px; color: var(--primary); }
-
         .footer { position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 -3px 15px rgba(0,0,0,0.05); z-index:100; }
-        .btn { padding: 12px 30px; border: none; border-radius: 12px; cursor: pointer; font-weight: bold; background: var(--primary); color: white; }
+        .btn { padding: 12px 25px; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; background: var(--primary); color: white; }
         .btn-grey { background: #edf2f7; color: #4a5568; }
-
-        .debug-bar { background: #fffde7; padding: 8px; font-size: 0.75rem; border-radius: 10px; margin-bottom: 10px; border: 1px solid #fbc02d; text-align: center; }
-        .debug-bar input { padding: 4px; border: 1px solid #ccc; border-radius: 4px; text-align: center; width: 80px; }
-
         .hidden { display: none !important; }
-
-        /* --- 手机端适配 (768px以下) --- */
-        @media (max-width: 768px) {
-            .q-card { grid-template-columns: 1fr; display: flex; flex-direction: column; padding: 15px; gap: 15px; min-height: auto; }
-            .q-img-section { order: -1; height: auto; min-height: 0; border: none; background: transparent; padding: 0; position: static; }
-            /* 手机端如果没有图片，让整个容器消失，不占位 */
-            .q-img-section:empty { display: none !important; } 
-            .q-img-section.no-img { display: none !important; }
-            .en { font-size: 1.05rem; }
-            .cn { font-size: 1rem; }
-        }
+        @media (max-width: 768px) { .q-card { grid-template-columns: 1fr; display: flex; flex-direction: column; padding: 15px; gap: 15px; min-height: auto; } .q-img-section { order: -1; height: 250px; position: static; } .q-img-section.no-img { display: none !important; } }
     </style>
 </head>
 <body>
@@ -85,14 +45,14 @@
     <button id="backBtn" class="home-btn hidden" onclick="location.reload()">🏠 首页</button>
     <h2 id="navTitle">希腊驾照模拟</h2>
     <select id="fileSelect" onchange="loadFile()" style="background:rgba(255,255,255,0.2); color:white; border:none; border-radius:4px; padding:4px;">
-        <option value="data.csv">汽车考题</option>
-        <option value="datamoto.csv">摩托考题</option>
+        <option value="data.csv">汽车题库</option>
+        <option value="datamoto.csv">摩托题库</option>
     </select>
 </div>
 
 <div class="container">
     <div id="statusBox" style="text-align:center; padding:40px; background:white; border-radius:15px; margin-top:20px;">
-        <h3>正在载入云端数据...</h3>
+        <h3>正在同步知识点匹配引擎...</h3>
     </div>
 
     <div id="mainTabs" class="mode-tabs hidden">
@@ -102,10 +62,6 @@
     </div>
 
     <div id="practiceArea" class="hidden">
-        <div class="debug-bar">
-            图片修正: <input type="text" id="manualPrefix" oninput="updateUI()">
-            + 题号: <b id="curImgNum" style="color:red"></b>
-        </div>
         <div id="quizContent"></div>
     </div>
 
@@ -120,12 +76,24 @@
 </div>
 
 <script>
-    const HISTORY_KEY = 'g_hist_v24';
-    const MISTAKE_KEY = 'g_mist_v24';
+    const HISTORY_KEY = 'g_hist_v27';
+    const MISTAKE_KEY = 'g_mist_v27';
 
     let masterData = [], currentQuestions = [], currentIdx = 0, currentMode = 'list';
+    let topicTipsPool = {}; // 存储每个专题的所有总结秘籍
     let userHistory = JSON.parse(localStorage.getItem(HISTORY_KEY) || '{}');
     let mistakeIds = JSON.parse(localStorage.getItem(MISTAKE_KEY) || '[]');
+
+    // 匹配引擎关键词定义
+    const matchRules = [
+        { key: ["reaction", "反应"], tipKey: "反应距离" },
+        { key: ["stopping distance", "停车距离", "empirical", "经验法则"], tipKey: "停车距离" },
+        { key: ["rain", "下雨", "wet", "潮湿", "seconds"], tipKey: "雨天" },
+        { key: ["alcohol", "酒精", "drunk", "饮酒"], tipKey: "酒精" },
+        { key: ["speed", "车速", "limit", "限速"], tipKey: "车速" },
+        { key: ["tyre", "轮胎", "pressure", "气压"], tipKey: "轮胎" },
+        { key: ["overtake", "超车"], tipKey: "超车" }
+    ];
 
     window.onload = loadFile;
 
@@ -139,20 +107,30 @@
 
     function parseCSV(data) {
         masterData = [];
+        topicTipsPool = {}; 
+
         for (let col = 0; col < data[0].length; col += 3) {
             let catCn = data[0][col+1] || "";
             if (!data[0][col]) continue;
-            let imgPrefix = catCn.split("专题")[0].trim();
+            topicTipsPool[catCn] = [];
+
+            let qCounter = 1;
             for (let row = 1; row < data.length; row++) {
-                if (data[row][col] && data[row][col].trim().length > 5) {
-                    const q = splitLogic(data[row][col], data[row][col+1]);
+                let cellEn = data[row][col], cellCn = data[row][col+1];
+                if (!cellEn || cellEn.trim().length < 5) continue;
+
+                if (cellEn.includes("1)")) {
+                    const q = splitLogic(cellEn, cellCn);
                     if (q) {
-                        q.cat = catCn.trim();
-                        q.prefix = imgPrefix;
+                        q.cat = catCn;
+                        q.prefix = catCn.split("专题")[0].trim();
                         q.rowNum = row;
                         q.uid = catCn + "_" + row;
                         masterData.push(q);
                     }
+                } else {
+                    // 如果不是题目，将其存入该专题的“秘籍池”
+                    topicTipsPool[catCn].push({ en: cellEn.trim(), cn: cellCn ? cellCn.trim() : "" });
                 }
             }
         }
@@ -170,6 +148,75 @@
         return { qEn: eC.q, qCn: cC.q, options: eC.o.map((e, i) => ({ en: e, cn: cC.o[i] || "" })), ans };
     }
 
+    function renderQuestion() {
+        const q = currentQuestions[currentIdx];
+        if(!q) return;
+        const isAnswered = q.userAns !== undefined;
+        document.getElementById('pageInfo').innerText = `${currentIdx + 1} / ${currentQuestions.length}`;
+        
+        const fileName = encodeURI(q.prefix + q.rowNum + ".jpg");
+
+        // --- 核心：智能匹配总结逻辑 ---
+        let matchedTips = [];
+        if (currentMode !== 'exam') {
+            const pool = topicTipsPool[q.cat] || [];
+            const fullText = (q.qEn + q.qCn).toLowerCase();
+
+            pool.forEach(tip => {
+                // 逻辑 A：如果题目里包含秘籍文字开头的词（比如秘籍叫“反应距离...”，题目包含“反应”）
+                // 我们取秘籍中文前 4 个字作为搜索词
+                const keyword = tip.cn.substring(0, 4);
+                if (fullText.includes(keyword.toLowerCase())) {
+                    matchedTips.push(tip);
+                }
+                // 逻辑 B：根据预设的 matchRules 匹配
+                matchRules.forEach(rule => {
+                    if (tip.cn.includes(rule.tipKey)) {
+                        rule.key.forEach(k => {
+                            if (fullText.includes(k.toLowerCase()) && !matchedTips.includes(tip)) {
+                                matchedTips.push(tip);
+                            }
+                        });
+                    }
+                });
+            });
+        }
+
+        let tipHtml = matchedTips.map(t => `<div class="tip-card"><b>💡 秘籍匹配：</b>${t.cn}</div>`).join("");
+
+        document.getElementById('quizContent').innerHTML = `
+            <div class="q-card">
+                <div class="q-text-section">
+                    <div class="q-header"><span class="en">${q.qEn}</span><span class="cn">${q.qCn}</span></div>
+                    <div class="options">
+                        ${q.options.map((o, i) => {
+                            let cls = isAnswered ? (i === q.ans ? "correct" : (i === q.userAns ? "wrong" : "")) : "";
+                            return `<div class="opt ${cls}" onclick="handleCheck(${i})">
+                                <span style="font-weight:bold;margin-right:10px">${i+1})</span>
+                                <div style="flex:1"><div>${o.en}</div><div style="color:#666;font-size:0.85rem">${o.cn}</div></div>
+                            </div>`;
+                        }).join("")}
+                    </div>
+                    ${tipHtml}
+                </div>
+                <div class="q-img-section">
+                    <img id="qImg" src="${fileName}" onload="this.parentElement.style.display='flex'" onerror="trySubV27(this, '${fileName}')">
+                </div>
+            </div>`;
+    }
+
+    function trySubV27(img, encoded) {
+        if (!img.dataset.tried) {
+            img.dataset.tried = "true";
+            img.src = "images/" + encoded;
+        } else {
+            img.style.display = 'none';
+            img.parentElement.classList.add('no-img');
+            if (window.innerWidth <= 768) img.parentElement.style.display = 'none';
+        }
+    }
+
+    // 其余基础功能保持不变...
     function showDashboard() {
         currentMode = 'list';
         document.getElementById('statusBox').classList.add('hidden');
@@ -180,141 +227,29 @@
         document.getElementById('backBtn').classList.add('hidden');
         document.getElementById('tab-list').className = 'tab active';
         document.getElementById('tab-mistake').innerText = `错题本 (${mistakeIds.length})`;
-
         const cats = [...new Set(masterData.map(d => d.cat))];
         let html = "";
         cats.forEach(c => {
             const list = masterData.filter(d => d.cat === c);
             const done = list.filter(d => userHistory[d.uid]).length;
             const perc = Math.round((done / list.length) * 100);
-            html += `<div class="cat-item" onclick="startPractice('${c}')">
-                <div style="display:flex; justify-content:space-between"><b>${c}</b><span>${done}/${list.length}</span></div>
-                <div class="progress-bar"><div class="progress-fill" style="width:${perc}%"></div></div>
-            </div>`;
+            html += `<div class="cat-item" onclick="startPractice('${c}')"><div style="display:flex; justify-content:space-between"><b>${c}</b><span>${done}/${list.length}</span></div><div class="progress-bar"><div class="progress-fill" style="width:${perc}%"></div></div></div>`;
         });
         document.getElementById('listView').innerHTML = html;
     }
-
-    function startPractice(cat) {
-        currentMode = 'practice';
-        currentQuestions = masterData.filter(d => d.cat === cat);
-        currentIdx = 0;
-        enterQuiz();
-    }
-
-    function enterQuiz() {
-        document.getElementById('listView').classList.add('hidden');
-        document.getElementById('mainTabs').classList.add('hidden');
-        document.getElementById('practiceArea').classList.remove('hidden');
-        document.getElementById('quizFooter').classList.remove('hidden');
-        document.getElementById('backBtn').classList.remove('hidden');
-        updateUI();
-    }
-
-    function updateUI() {
-        const q = currentQuestions[currentIdx];
-        const isAnswered = q.userAns !== undefined;
-        document.getElementById('pageInfo').innerText = `${currentIdx + 1} / ${currentQuestions.length}`;
-        document.getElementById('curImgNum').innerText = q.rowNum;
-
-        const pf = document.getElementById('manualPrefix').value || q.prefix;
-        const fileName = encodeURI(pf + q.rowNum + ".jpg");
-
-        document.getElementById('quizContent').innerHTML = `
-            <div class="q-card">
-                <div class="q-text-section">
-                    <div class="q-header">
-                        <span class="en">${q.qEn}</span>
-                        <span class="cn">${q.qCn}</span>
-                    </div>
-                    <div class="options">
-                        ${q.options.map((o, i) => {
-                            let cls = isAnswered ? (i === q.ans ? "correct" : (i === q.userAns ? "wrong" : "")) : "";
-                            return `<div class="opt ${cls}" onclick="handleCheck(${i})">
-                                <span class="opt-idx">${i+1})</span>
-                                <div style="flex:1"><div>${o.en}</div><div style="color:#666;font-size:0.85rem">${o.cn}</div></div>
-                            </div>`;
-                        }).join("")}
-                    </div>
-                </div>
-                <div class="q-img-section" id="imgBox">
-                    <img id="qImg" src="${fileName}" 
-                         onload="this.parentElement.classList.remove('no-img')" 
-                         onerror="trySubV24(this, '${fileName}')">
-                </div>
-            </div>`;
-    }
-
-    function trySubV24(img, encoded) {
-        if (!img.dataset.tried) {
-            img.dataset.tried = "true";
-            img.src = "images/" + encoded;
-        } else {
-            // 彻底找不到图：给父容器加一个标识类，在手机端会隐藏它
-            img.style.display = 'none';
-            img.parentElement.classList.add('no-img');
-        }
-    }
-
+    function startPractice(cat) { currentMode = 'practice'; currentQuestions = masterData.filter(d => d.cat === cat); currentIdx = 0; enterQuiz(); }
+    function enterQuiz() { document.getElementById('listView').classList.add('hidden'); document.getElementById('mainTabs').classList.add('hidden'); document.getElementById('practiceArea').classList.remove('hidden'); document.getElementById('quizFooter').classList.remove('hidden'); document.getElementById('backBtn').classList.remove('hidden'); renderQuestion(); }
     function handleCheck(idx) {
-        const q = currentQuestions[currentIdx];
-        if (q.userAns !== undefined) return;
-        q.userAns = idx;
-        if (idx === q.ans) {
-            userHistory[q.uid] = true;
-            localStorage.setItem(HISTORY_KEY, JSON.stringify(userHistory));
-        } else {
-            if (!mistakeIds.includes(q.uid)) {
-                mistakeIds.push(q.uid);
-                localStorage.setItem(MISTAKE_KEY, JSON.stringify(mistakeIds));
-            }
-        }
-        updateUI();
+        const q = currentQuestions[currentIdx]; if (q.userAns !== undefined) return; q.userAns = idx;
+        if (idx === q.ans) { userHistory[q.uid] = true; localStorage.setItem(HISTORY_KEY, JSON.stringify(userHistory)); }
+        else { if (!mistakeIds.includes(q.uid)) { mistakeIds.push(q.uid); localStorage.setItem(MISTAKE_KEY, JSON.stringify(mistakeIds)); } }
+        renderQuestion();
     }
-
-    function moveQ(s) {
-        if (currentMode === 'exam' && currentIdx === currentQuestions.length - 1 && s > 0) return finishExam();
-        currentIdx = (currentIdx + s + currentQuestions.length) % currentQuestions.length;
-        updateUI();
-        window.scrollTo(0,0);
-    }
-
-    function startMistakes() {
-        currentMode = 'mistake';
-        currentQuestions = masterData.filter(d => mistakeIds.includes(d.uid));
-        if(currentQuestions.length === 0) return alert("没找到错题！");
-        currentIdx = 0;
-        enterQuiz();
-    }
-
-    function startExam() {
-        currentMode = 'exam';
-        currentQuestions = [...masterData].sort(() => 0.5 - Math.random()).slice(0, 30);
-        currentQuestions.forEach(q => delete q.userAns);
-        currentIdx = 0;
-        enterQuiz();
-    }
-
-    function finishExam() {
-        const score = currentQuestions.filter(q => q.userAns === q.ans).length;
-        document.getElementById('practiceArea').classList.add('hidden');
-        document.getElementById('quizFooter').classList.add('hidden');
-        const rv = document.getElementById('resultView');
-        rv.classList.remove('hidden');
-        rv.innerHTML = `<div style="font-size:3rem; font-weight:bold; color:var(--primary)">${score}/30</div>
-            <h2>${score >= 29 ? '🎉 恭喜通过！' : '❌ 未及格'}</h2>
-            <button class="btn" style="margin-top:20px" onclick="location.reload()">返回首页</button>`;
-    }
-
-    function switchTab(t) {
-        if (t === 'list') location.reload();
-        else startMistakes();
-    }
-
-    function updatePrefix() {
-        currentQuestions[currentIdx].prefix = document.getElementById('manualPrefix').value;
-        updateUI();
-    }
+    function moveQ(s) { if (currentMode === 'exam' && currentIdx === currentQuestions.length - 1 && s > 0) return finishExam(); currentIdx = (currentIdx + s + currentQuestions.length) % currentQuestions.length; renderQuestion(); window.scrollTo(0,0); }
+    function startMistakes() { currentMode = 'mistake'; currentQuestions = masterData.filter(d => mistakeIds.includes(d.uid)); if(currentQuestions.length === 0) return alert("没找到错题！"); currentIdx = 0; enterQuiz(); }
+    function startExam() { currentMode = 'exam'; currentQuestions = [...masterData].sort(() => 0.5 - Math.random()).slice(0, 30); currentQuestions.forEach(q => delete q.userAns); currentIdx = 0; enterQuiz(); }
+    function finishExam() { const score = currentQuestions.filter(q => q.userAns === q.ans).length; document.getElementById('practiceArea').classList.add('hidden'); document.getElementById('quizFooter').classList.add('hidden'); const rv = document.getElementById('resultView'); rv.classList.remove('hidden'); rv.innerHTML = `<div style="font-size:3rem; font-weight:bold; color:var(--primary)">${score}/30</div><h2>${score >= 29 ? '🎉 恭喜通过！' : '❌ 未及格'}</h2><button class="btn" style="margin-top:20px" onclick="location.reload()">返回首页</button>`; }
+    function switchTab(t) { if (t === 'list') location.reload(); else startMistakes(); }
 </script>
 </body>
 </html>
