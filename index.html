@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="referrer" content="no-referrer">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>希腊驾照模拟 - V23 智能版</title>
+    <title>希腊驾照模拟 - V24 比例锁定版</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     <style>
-        :root { --primary: #00529b; --success: #27ae60; --error: #e74c3c; --bg: #f0f2f5; }
+        :root { --primary: #00529b; --success: #27ae60; --error: #e74c3c; --bg: #f4f7f9; }
         body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); margin: 0; padding: 0; user-select: none; }
         
         /* 导航栏 */
@@ -17,68 +17,65 @@
 
         .container { max-width: 1100px; margin: 10px auto; padding: 0 10px; padding-bottom: 120px; }
         
-        /* 选项卡 */
         .mode-tabs { display: flex; background: white; border-radius: 12px; margin-bottom: 15px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         .tab { flex: 1; padding: 12px; text-align: center; cursor: pointer; font-weight: bold; font-size: 0.9rem; color: #666; }
         .tab.active { color: var(--primary); border-bottom: 3px solid var(--primary); background: #f0f7ff; }
 
-        /* 专题列表 */
         .cat-list { background: white; border-radius: 15px; padding: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
         .cat-item { display: flex; flex-direction: column; padding: 15px; border-bottom: 1px solid #f0f0f0; cursor: pointer; }
         .progress-bar { height: 6px; background: #eee; border-radius: 3px; overflow: hidden; margin-top: 8px; }
         .progress-fill { height: 100%; background: var(--success); transition: width 0.3s; }
 
-        /* 核心题目卡片容器 */
+        /* --- 核心：比例锁死的题目卡片 --- */
         .q-card { 
             background: white; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); 
             padding: 25px; margin-bottom: 15px; 
-            display: flex; gap: 30px; min-height: 400px;
+            display: grid; /* 使用 Grid 网格布局 */
+            grid-template-columns: 1.5fr 1fr; /* 电脑端强制 60% : 40% 分栏 */
+            gap: 30px;
+            min-height: 450px;
         }
 
         /* 文本区域 */
-        .q-text-section { flex: 1.5; order: 1; }
-        /* 图片区域 */
+        .q-text-section { grid-column: 1; }
+        /* 图片占位区域 */
         .q-img-section { 
-            flex: 1; order: 2; 
-            display: none; /* 默认隐藏，有图才显示 */
+            grid-column: 2;
+            display: flex; 
             align-items: center; justify-content: center; 
             background: #fafafa; border-radius: 15px; border: 1px solid #eee;
-            padding: 10px; max-height: 400px;
+            padding: 10px; height: 350px; 
+            position: sticky; top: 70px;
         }
-        .q-img-section img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 8px; }
+        .q-img-section img { max-width: 100%; max-height: 100%; object-fit: contain; }
 
-        /* 文本样式 */
         .q-header { border-left: 6px solid var(--primary); padding-left: 15px; margin-bottom: 25px; }
-        .en { font-size: 1.15rem; font-weight: bold; color: #2d3748; display: block; margin-bottom: 6px; line-height: 1.4; }
-        .cn { font-size: 1.1rem; color: #16a085; display: block; line-height: 1.4; }
+        .en { font-size: 1.1rem; font-weight: bold; color: #2d3748; display: block; margin-bottom: 6px; line-height: 1.4; }
+        .cn { font-size: 1.05rem; color: #16a085; display: block; line-height: 1.4; }
 
-        /* 选项样式 */
-        .opt { border: 2px solid #edf2f7; border-radius: 12px; padding: 15px; margin-bottom: 12px; cursor: pointer; background: #fff; transition: 0.1s; display: flex; align-items: flex-start; }
-        .opt:hover:not(.locked) { border-color: var(--primary); background: #f8fbff; }
+        .opt { border: 2px solid #edf2f7; border-radius: 12px; padding: 15px; margin-bottom: 12px; cursor: pointer; background: #fff; display: flex; align-items: flex-start; }
         .opt.correct { background: #e6fffa !important; border-color: var(--success) !important; color: #22543d; font-weight: bold; }
         .opt.wrong { background: #fff5f5 !important; border-color: var(--error) !important; color: #822727; }
         .opt-idx { font-weight: bold; margin-right: 12px; color: var(--primary); }
 
-        /* 底部操作 */
         .footer { position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 -3px 15px rgba(0,0,0,0.05); z-index:100; }
-        .btn { padding: 12px 30px; border: none; border-radius: 12px; cursor: pointer; font-weight: bold; background: var(--primary); color: white; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .btn { padding: 12px 30px; border: none; border-radius: 12px; cursor: pointer; font-weight: bold; background: var(--primary); color: white; }
         .btn-grey { background: #edf2f7; color: #4a5568; }
 
-        /* 调试栏 */
         .debug-bar { background: #fffde7; padding: 8px; font-size: 0.75rem; border-radius: 10px; margin-bottom: 10px; border: 1px solid #fbc02d; text-align: center; }
         .debug-bar input { padding: 4px; border: 1px solid #ccc; border-radius: 4px; text-align: center; width: 80px; }
 
         .hidden { display: none !important; }
 
-        /* --- 响应式手机端布局 (768px以下) --- */
+        /* --- 手机端适配 (768px以下) --- */
         @media (max-width: 768px) {
-            .q-card { flex-direction: column; padding: 15px; gap: 15px; min-height: auto; }
-            /* 手机端图片排在文字前面 */
-            .q-img-section { order: -1; flex: none; height: auto; min-height: 100px; max-height: 250px; width: 100%; }
-            .q-text-section { order: 1; flex: none; width: 100%; }
+            .q-card { grid-template-columns: 1fr; display: flex; flex-direction: column; padding: 15px; gap: 15px; min-height: auto; }
+            .q-img-section { order: -1; height: auto; min-height: 0; border: none; background: transparent; padding: 0; position: static; }
+            /* 手机端如果没有图片，让整个容器消失，不占位 */
+            .q-img-section:empty { display: none !important; } 
+            .q-img-section.no-img { display: none !important; }
             .en { font-size: 1.05rem; }
             .cn { font-size: 1rem; }
-            .opt { padding: 12px; }
         }
     </style>
 </head>
@@ -95,7 +92,7 @@
 
 <div class="container">
     <div id="statusBox" style="text-align:center; padding:40px; background:white; border-radius:15px; margin-top:20px;">
-        <h3>正在连接云端数据...</h3>
+        <h3>正在载入云端数据...</h3>
     </div>
 
     <div id="mainTabs" class="mode-tabs hidden">
@@ -123,8 +120,8 @@
 </div>
 
 <script>
-    const HISTORY_KEY = 'g_hist_v23';
-    const MISTAKE_KEY = 'g_mist_v23';
+    const HISTORY_KEY = 'g_hist_v24';
+    const MISTAKE_KEY = 'g_mist_v24';
 
     let masterData = [], currentQuestions = [], currentIdx = 0, currentMode = 'list';
     let userHistory = JSON.parse(localStorage.getItem(HISTORY_KEY) || '{}');
@@ -225,7 +222,6 @@
 
         document.getElementById('quizContent').innerHTML = `
             <div class="q-card">
-                <!-- 文本区域 -->
                 <div class="q-text-section">
                     <div class="q-header">
                         <span class="en">${q.qEn}</span>
@@ -241,22 +237,22 @@
                         }).join("")}
                     </div>
                 </div>
-                <!-- 图片区域：默认隐藏，只有 onload 触发后才展示 -->
                 <div class="q-img-section" id="imgBox">
                     <img id="qImg" src="${fileName}" 
-                         onload="this.parentElement.style.display='flex'" 
-                         onerror="trySubV23(this, '${fileName}')">
+                         onload="this.parentElement.classList.remove('no-img')" 
+                         onerror="trySubV24(this, '${fileName}')">
                 </div>
             </div>`;
     }
 
-    function trySubV23(img, encoded) {
+    function trySubV24(img, encoded) {
         if (!img.dataset.tried) {
             img.dataset.tried = "true";
             img.src = "images/" + encoded;
         } else {
-            // 彻底找不到图：隐藏容器，不占位
-            img.parentElement.style.display = 'none';
+            // 彻底找不到图：给父容器加一个标识类，在手机端会隐藏它
+            img.style.display = 'none';
+            img.parentElement.classList.add('no-img');
         }
     }
 
