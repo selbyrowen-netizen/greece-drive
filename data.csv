@@ -726,7 +726,8 @@ ALCOHOL   17,酒精专题 (ALCOHOL) - 17题,,DISTANCES   25,距离专题 (DISTAN
 √ 2) 提前规划谁不喝酒以便结束后开车；否则弃车并乘坐其他交通工具返回。
 3) 回家时低速并小心驾驶。",,"Does the stopping distance correspond to the number of metres that your vehicle covered during reaction and braking time?
 1) YES
-2) NO","停车距离（Stopping distance）是否等于车辆在反应时间和刹车时间内行驶的总米数？
+2) NO
+","停车距离（Stopping distance）是否等于车辆在反应时间和刹车时间内行驶的总米数？
 √ 1) 是的
 2) 不是",,"Committing the offence of escape means:
 1) Not stopping at the scene of an accident while you have been involved in it as a witness.
@@ -1520,7 +1521,9 @@ ALCOHOL   17,酒精专题 (ALCOHOL) - 17题,,DISTANCES   25,距离专题 (DISTAN
 3) All three vehicles.","哪些车辆允许转弯？
 √  1) 车辆 1 和 2
 2) 车辆 2 和 3
-3) 所有三辆车（在交警允许通行的方向上）",,"减速车道：绝对不能在高速公路的主干道上踩刹车，必须先进减速道再刹车。","加速车道：进入主路前必须先看镜子寻找间隙，然后加速匹配主路车流速度，最后并入。",,"If you stop due to a break-down on a railway crossing, the first thing you should do is to:
+3) 所有三辆车（在交警允许通行的方向上）",,"减速车道：绝对不能在高速公路的主干道上踩刹车，必须先进减速道再刹车。
+","加速车道：进入主路前必须先看镜子寻找间隙，然后加速匹配主路车流速度，最后并入。
+",,"If you stop due to a break-down on a railway crossing, the first thing you should do is to:
 1) Phone the person responsible for the crossing.
 2) Push the vehicle off the crossing.
 3) Take all passengers out of the vehicle and away from it.","如果你因故障停在铁路道口上，你首先要做的是：
@@ -1616,7 +1619,8 @@ ALCOHOL   17,酒精专题 (ALCOHOL) - 17题,,DISTANCES   25,距离专题 (DISTAN
 3) Stop only if another vehicle is coming vertically.","如果你在路口前看到这个交通标志（STOP），你应该怎么办？
 1) 在标志牌处停车并让行。
 √ 2) 在停止线处停车，如果没有停止线，则在人行道的虚拟延长线处停车（即路口边缘），以便获得完整的路口视野，并让行。
-3) 只有当垂直方向有车辆驶来时才停车。",,"绿色箭头：当主灯红灯、右转箭头绿灯时，只有右转车能走，直行车必须原地等待。","绿灯陷阱：即便绿灯，如果路口里面已经堵死了，你绝对不能开进去“凑热闹”，否则会因为阻塞路口（Block the intersection）被罚。
+3) 只有当垂直方向有车辆驶来时才停车。",,"绿色箭头：当主灯红灯、右转箭头绿灯时，只有右转车能走，直行车必须原地等待。
+","绿灯陷阱：即便绿灯，如果路口里面已经堵死了，你绝对不能开进去“凑热闹”，否则会因为阻塞路口（Block the intersection）被罚。
 ",,"What does this traffic sign mean?
 1) Route for buses and trolley-buses only.
 2) End of route for buses and trolley-buses only.
@@ -1706,7 +1710,8 @@ ALCOHOL   17,酒精专题 (ALCOHOL) - 17题,,DISTANCES   25,距离专题 (DISTAN
 3) Vehicle 3.","哪辆车被准许继续行驶？
 1) 车辆 1
 √  2) 车辆 2 和 3
-3) 车辆 3（侧对交警的方向）",,"路边起步：这是希腊路考非常看重的一点。无论你打没打灯，只要主路有车，你就不能动，绝对不能中断（阻碍）正常交通流。","横向标线：减速车道和加速车道在路面上是用特殊的宽虚线标记的。
+3) 车辆 3（侧对交警的方向）",,"路边起步：这是希腊路考非常看重的一点。无论你打没打灯，只要主路有车，你就不能动，绝对不能中断（阻碍）正常交通流。
+","横向标线：减速车道和加速车道在路面上是用特殊的宽虚线标记的。
 ",,"In roads inside residential areas the warning triangle must be placed behind the vehicle at a distance of at least:
 1) 50 m.
 2) 20 m.","在住宅区内的道路上，警告三角牌必须放置在车后至少多远距离？
@@ -2105,7 +2110,8 @@ STOP (八角形)：无论有没有车，必须停死（车轮完全不动）。
 3) Right turn is forbidden.","这个交通标志（带斜杠的掉头箭头）是什么意思？
 √ 1) 禁止掉头（180度转弯）。
 2) 禁止左转。
-3) 禁止右转。",,"颜色区分：在希腊，绿色背景的标志通常指高速公路（Motorway），蓝色背景通常指主要道路/快速路（Expressway）。","图标含义：
+3) 禁止右转。",,"颜色区分：在希腊，绿色背景的标志通常指高速公路（Motorway），蓝色背景通常指主要道路/快速路（Expressway）。
+","图标含义：
 两个车道穿过一个桥洞的图标 = 高速公路。
 一辆车行驶在路上的图标 = 快速路。
 带有红色斜杠 = 该级别道路结束。",,,,,"What does this traffic sign mean?
@@ -2127,7 +2133,8 @@ STOP (八角形)：无论有没有车，必须停死（车轮完全不动）。
 √ 1) 人行天桥。
 2) 人行地下通道。
 3) 无阶梯的双层人行过道。",,"优先权示意图：在路口标志下常有一个小方牌，上面画着黑线。粗黑线代表主路（拥有优先权的方向），细线代表支路。
-","拖车图标：意味着该路段不仅禁停，而且如果你停了，交警会直接把车拖走 (Removed/Towed away)。",,"主路 (Priority Road)：
+","拖车图标：意味着该路段不仅禁停，而且如果你停了，交警会直接把车拖走 (Removed/Towed away)。
+",,"主路 (Priority Road)：
 黄心菱形：你是主路，路口你先走。
 带斜杠：主路结束，接下来的路口回归“右侧先行”原则。",,,,,,"What does this traffic sign mean?
 1) Dangerous right bend ahead.
@@ -2798,7 +2805,8 @@ STOP (八角形)：无论有没有车，必须停死（车轮完全不动）。
 3) Cross the rails speeding up.","铁路工作人员在道口挥动红灯。你应该怎么办？
 √ 1) 在铁路道口前的安全距离处停车。
 2) 缓慢穿过铁轨。
-3) 加速穿过铁轨。",,"B类驾照 (Category B)：记住两个关键数字——9座（含司机）和 3.5吨（3,500kg）。","酒精刑事责任：超过 1.10 g/l 不仅仅是罚款扣分，而是属于刑事犯罪 (Misdemeanour)。
+3) 加速穿过铁轨。",,"B类驾照 (Category B)：记住两个关键数字——9座（含司机）和 3.5吨（3,500kg）。
+","酒精刑事责任：超过 1.10 g/l 不仅仅是罚款扣分，而是属于刑事犯罪 (Misdemeanour)。
 ",,"The blind spot is an area:
 1) Not seen in the mirrors from the driver’s seat.
 2) Seen in the mirrors.
@@ -2817,7 +2825,8 @@ STOP (八角形)：无论有没有车，必须停死（车轮完全不动）。
 √ 1) 在遇到对向来车之前，或跟随其他车辆行驶时。
 2) 在十字路口。
 3) 在坡顶位置。",,"握方向盘姿势：最标准的是“10点10分”或“9点1刻”，这样转弯半径最大且最安全。
-","左脚习惯：左脚只有在换挡或停车时才去碰离合，平时必须放在左边的地板（休息踏板）上，否则会加速离合器片的磨损。",,"Economical driving:
+","左脚习惯：左脚只有在换挡或停车时才去碰离合，平时必须放在左边的地板（休息踏板）上，否则会加速离合器片的磨损。
+",,"Economical driving:
 1) Reduces fuel consumption, improves safety and is beneficial to the environment.
 2) Increases the wear of the vehicle.","经济驾驶（Economical driving）：
 √ 1) 降低油耗、提高安全性且对环境有益。
@@ -2835,7 +2844,8 @@ STOP (八角形)：无论有没有车，必须停死（车轮完全不动）。
 绿色 (Green)：通往高速公路 (Motorway)。
 蓝色 (Blue)：通往本地/城际道路 (Local network) 或 快速路 (Expressway)。
 棕色 (Brown)：通往旅游景点、考古遗址 (Touristic/Archaeological)。
-黄色 (Yellow)：通常用于施工临时绕行。","特殊路线：如果路口禁止左转，你会看到一个画着“先右转再绕一圈直行”的标志，这叫间接左转。",,"What does this traffic sign mean?
+黄色 (Yellow)：通常用于施工临时绕行。","特殊路线：如果路口禁止左转，你会看到一个画着“先右转再绕一圈直行”的标志，这叫间接左转。
+",,"What does this traffic sign mean?
 1) Approaching a circular compulsory course.
 2) Compulsory movement of vehicles in a row.
 3) Road closed to all vehicles.","这个交通标志是什么意思？
@@ -2851,8 +2861,8 @@ STOP (八角形)：无论有没有车，必须停死（车轮完全不动）。
 1) Turn right or left ahead.
 2) Compulsory passage from the right or left side of the traffic island or obstacle.
 3) Going straight is forbidden.","这个交通标志（蓝色圆圈内有两个指向左和右的向下箭头）是什么意思？
-√ 1) 前方必须向右或向左转弯。
-2) 强制从交通岛或障碍物的右侧或左侧通过。
+1) 前方必须向右或向左转弯。
+√ 2) 强制从交通岛或障碍物的右侧或左侧通过。
 3) 禁止直行。",,"You wish to leave your vehicle parked on a road. Can you leave the engine on until you come back?
 1) Only if you park for less than 5 minutes.
 2) So as to charge a battery.
@@ -2983,7 +2993,8 @@ STOP (八角形)：无论有没有车，必须停死（车轮完全不动）。
 3) Select the first gear.","你将车停在路边，车头朝向上坡。你必须拉紧手刹并：
 1) 挂入倒挡（Reverse）。
 2) 挂入空挡。
-√ 3) 挂入一挡（First gear）。",,"弯道内禁忌：严禁在弯道内换挡或猛踩刹车，这非常容易导致翻车或侧滑。","大车右转：看到大车右转，千万别从它右边钻过去，因为它必须先往左甩一下头才能转过去。
+√ 3) 挂入一挡（First gear）。",,"弯道内禁忌：严禁在弯道内换挡或猛踩刹车，这非常容易导致翻车或侧滑。
+","大车右转：看到大车右转，千万别从它右边钻过去，因为它必须先往左甩一下头才能转过去。
 ",,"When are you allowed to drive a motor vehicle in public roads?
 1) When you possess the vehicle registration licence.
 2) When the vehicle does not meet the requirements of safe traffic.","什么时候你被允许在公共道路上驾驶机动车？
@@ -3036,7 +3047,8 @@ STOP (八角形)：无论有没有车，必须停死（车轮完全不动）。
 1）车辆 1，因为它与电车轨道平行行驶。
 √ 2) 车辆 2，因为它从车辆 1 的右侧驶来。
 3) 车辆 1，因为车辆 2 打算左转。",,"交警 (Traffic Policeman)：最高权力，他让你闯红灯你也得闯。
-","临时交通标志 (Temporary Signs)：比如道路施工的标志。",,,,,"In a motorway or expressway the warning triangle must be placed behind the vehicle at a distance of at least:
+","临时交通标志 (Temporary Signs)：比如道路施工的标志。
+",,,,,"In a motorway or expressway the warning triangle must be placed behind the vehicle at a distance of at least:
 1) 50 m.
 2) 100 m.
 ","在高速公路或快速路上，警告三角牌必须放置在车后至少多远距离？
@@ -3054,7 +3066,8 @@ STOP (八角形)：无论有没有车，必须停死（车轮完全不动）。
 1) Switch on the dipped headlights and fog lights.
 2) Switch on the side lights only.","在大雾情况下：
 √ 1) 开启近光灯和雾灯。
-2) 仅开启侧灯（示宽灯）。",,"后排安全带：在希腊，不系后排安全带是违法的，且物理上会对前排乘客造成致命撞击。",,,"What are the consequences of a significant reduction of the recommended tyre pressure?
+2) 仅开启侧灯（示宽灯）。",,"后排安全带：在希腊，不系后排安全带是违法的，且物理上会对前排乘客造成致命撞击。
+",,,"What are the consequences of a significant reduction of the recommended tyre pressure?
 1) Environmental pollution is reduced.
 2) Fuel consumption and emission of harmful substances are increased.
 3) Safer driving.","显著降低推荐轮胎气压的后果是什么？
@@ -3155,7 +3168,9 @@ STOP (八角形)：无论有没有车，必须停死（车轮完全不动）。
 3) Pass the railway crossing as long as no train appears to be coming.","在红灯闪烁但移动栏杆尚未下降的铁路平交道口，你应该怎么办？
 1) 只要栏杆还开着就继续行驶。
 √ 2) 在警告交通标志前等待。
-3) 只要没看到火车开过来就穿过道口。",,"垂直标志 (Vertical Signs)：如 STOP 标志、让行标志、优先权道路标志。","路面标线 (Horizontal Markings)：如停止线、黄色网格线。",,,,,,,,,,,,,,"In this case, the two vehicles that wait will turn left having each other on their right:
+3) 只要没看到火车开过来就穿过道口。",,"垂直标志 (Vertical Signs)：如 STOP 标志、让行标志、优先权道路标志。
+","路面标线 (Horizontal Markings)：如停止线、黄色网格线。
+",,,,,,,,,,,,,,"In this case, the two vehicles that wait will turn left having each other on their right:
 1) YES
 2) NO","在这种情况下，两辆等待转弯的车辆在左转时会保持对方在自己的右侧（即各自在中心点前转弯）：
 √ 1) 是的（希腊标准转法：左转车辆互不绕行）。
@@ -3253,7 +3268,11 @@ STOP (八角形)：无论有没有车，必须停死（车轮完全不动）。
 单手高举：相当于黄灯，所有方向的车辆都必须停止（已经在路口内的尽快离开）。",,,,,"警告三角牌距离 (最爱考数字)：
 住宅区 (Inside)：20米
 郊区 (Outside)：50米
-高速/快速路 (Motorway)：100米","爆胎/摇晃：绝对不能急刹车！正确做法永远是“紧握方向盘”和“平稳/逐渐减速”。",,,,,"坡道停车：上坡挂1挡，下坡挂倒挡 (Reverse)。这利用了发动机的阻力来防止溜车。","下坡禁忌：绝对不能熄火或挂空挡滑行，因为这会导致转向助力和刹车助力失效，非常危险。",,"In this picture you are driving in a motorway with three lanes per direction and you are moving at the maximum permissible speed limit:
+高速/快速路 (Motorway)：100米
+","爆胎/摇晃：绝对不能急刹车！正确做法永远是“紧握方向盘”和“平稳/逐渐减速”。
+",,,,,"坡道停车：上坡挂1挡，下坡挂倒挡 (Reverse)。这利用了发动机的阻力来防止溜车。
+","下坡禁忌：绝对不能熄火或挂空挡滑行，因为这会导致转向助力和刹车助力失效，非常危险。
+",,"In this picture you are driving in a motorway with three lanes per direction and you are moving at the maximum permissible speed limit:
 1) You should give the right lane to the heavy vehicles.
 2) You should overtake the lorry and return to the right lane.
 3) You should move on the left lane so as to prevent some vehicles moving at a speed over the limit.","在此图中，你在每方向有三条车道的高速公路上行驶，且正以最高允许限速行驶：
@@ -3395,7 +3414,8 @@ STOP (八角形)：无论有没有车，必须停死（车轮完全不动）。
 2) Other individual animals should be disregarded.","一群动物正在你车前经过。你应该考虑到什么？
 √ 1) 可能还有其他落单的动物跟随群体。
 2) 不必理会其他落单的动物。",,"50 km/h：住宅区（城镇内）的标准限速。看到城市地名标志（白底蓝框或蓝底白字）即生效。
-","90 km/h：普通郊区道路/国道的标准限速。"
+","90 km/h：普通郊区道路/国道的标准限速。
+"
 ,,,"Reaction time varies according to:
 1) External conditions (fog, etc.).
 2) Condition of your vehicle.
@@ -3413,16 +3433,20 @@ STOP (八角形)：无论有没有车，必须停死（车轮完全不动）。
 2) You should speed up and pass between the white car and the pavement.","你打算直行，但一辆白色轿车停在一个糟糕位置等待横穿马路，挡住了你的部分车道。你应该怎么办？
 √ 1) 你应停车让白色车辆先行，以便它清理道路。
 2) 你应加速从白色车辆和人行道之间穿过。",,,,,"路宽度不代表优先权：在希腊理论考试中，除非有标志，否则“路更宽”、“是主干道”这些选项统统是干扰项，右侧先行才是最高准则。
-","特殊交通工具：火车和有轨电车 (Tram) 在路口拥有绝对优先权，哪怕它们从你左边来。",,"Which vehicle has priority and why?
+","特殊交通工具：火车和有轨电车 (Tram) 在路口拥有绝对优先权，哪怕它们从你左边来。
+",,"Which vehicle has priority and why?
 1) Vehicle 1, because it is moving in a priority road.
 2) Vehicle 2, because it is coming from the right of vehicle 1.
 3) Vehicle 2, because it maintains its course.","哪辆车拥有优先权，为什么？
 √ 1) 车辆 1，因为它在优先权道路（主路）上行驶。
 2) 车辆 2，因为车辆 2 从车辆 1 的右侧驶来。
-3) 车辆 2，因为车辆 2 保持原路线行驶。",,"信号灯 vs 标志：只要信号灯在亮（绿灯），它就大过路口的 STOP 标志或让行标志。你可以直接走。","闪烁黄灯：如果路口灯在闪黄灯，说明灯“下班了”，这时必须看路口的标志（谁在主路谁先走）。",,,,,,,,"铁轨故障：命最重要，先让乘客下车逃命，再想办法移车。
+3) 车辆 2，因为车辆 2 保持原路线行驶。",,"信号灯 vs 标志：只要信号灯在亮（绿灯），它就大过路口的 STOP 标志或让行标志。你可以直接走。
+","闪烁黄灯：如果路口灯在闪黄灯，说明灯“下班了”，这时必须看路口的标志（谁在主路谁先走）。
+",,,,,,,,"铁轨故障：命最重要，先让乘客下车逃命，再想办法移车。
 ",,,,,,"驾驶姿势：手腕能搭在方向盘顶端，说明你离方向盘的距离最合适，既能灵活转向，万一气囊弹出也能起到保护作用。
 ",,,,,,,,,"眩目处理：如果对向车晃你，不要对晃。正确的做法是：减速并将视线移向道路右侧边缘（利用白线导航），避免直视强光。
-","车窗积冰：出于安全考虑，必须清理所有 (All) 窗户，不只是前挡。",,,,,"Why should you avoid the aimless abrupt and hard start?
+","车窗积冰：出于安全考虑，必须清理所有 (All) 窗户，不只是前挡。
+",,,,,"Why should you avoid the aimless abrupt and hard start?
 1) Because thus the seat belt is overstrained.
 2) Because thus fuel consumption and air pollution is increased.","为什么应避免无目的的突然猛烈起步？
 1) 因为会让安全带负荷过重。
@@ -3482,7 +3506,11 @@ STOP (八角形)：无论有没有车，必须停死（车轮完全不动）。
 1) Speed up and, after overtaking the leading car on the right, pull in the left lane.
 2) Slow down, check behind them whether the left lane is clear and enter it following the leading car.","红色轿车的司机开启了左转向灯，打算进入有另一辆车行驶的左侧车道。他们应该怎么办？
 1) 加速，从右侧超过前车后切入左侧车道。
-√ 2) 减速，检查后方左侧车道是否通畅，跟在前车后面进入。",,"右侧先行原则 (Priority from the Right)：在希腊，如果路口没有红绿灯也没有“掉头”、“让行”或“停车”标志，右侧来车永远优先。","环岛特殊规则：这是很多外国司机的“坑”。在希腊，如果环岛路口没有任何标志，进入环岛的车（从右边来）比环岛内的车优先。但现实中大部分环岛都有让行标志。",,"高速/快速路：进入高速公路的车辆永远没有优先权，必须给主线车辆让行。","防御性驾驶：即便你有优先权，如果看到别人飞速开过来，正确答案通常是“准备停车”，而不是硬冲。",,"Which vehicle must wait for the other to pass and why?
+√ 2) 减速，检查后方左侧车道是否通畅，跟在前车后面进入。",,"右侧先行原则 (Priority from the Right)：在希腊，如果路口没有红绿灯也没有“掉头”、“让行”或“停车”标志，右侧来车永远优先。
+","环岛特殊规则：这是很多外国司机的“坑”。在希腊，如果环岛路口没有任何标志，进入环岛的车（从右边来）比环岛内的车优先。但现实中大部分环岛都有让行标志。
+",,"高速/快速路：进入高速公路的车辆永远没有优先权，必须给主线车辆让行。
+","防御性驾驶：即便你有优先权，如果看到别人飞速开过来，正确答案通常是“准备停车”，而不是硬冲。
+",,"Which vehicle must wait for the other to pass and why?
 1) The agricultural tractor, because it is going to leave a priority road.
 2) The agricultural tractor, because it is a slow-moving vehicle and must not hinder the movement of a passenger vehicle.
 3) The passenger vehicle, because the agricultural tractor is moving in a priority road.","哪辆车必须等待另一辆车先行，为什么？
@@ -3492,7 +3520,9 @@ STOP (八角形)：无论有没有车，必须停死（车轮完全不动）。
 看到闪红灯必须停，不管栏杆下没下来。
 火车过去后，必须等红灯灭了才能走。
 如果有堵车风险，绝对不能开上铁轨，要停在道口标志前。","电车 (Tram)：在希腊，电车在很多情况下（尤其是同等优先权时）比汽车优先。
-",,,,,,,,,,,,,,,,,"靠右原则：无论路有多空、你的速度多快，右侧车道 (Right lane) 才是你应该待的地方。左边车道只用来超车。","实线不可跨：白色连续实线（Continuous line）在希腊法律里就像一道墙，绝对不能压，更不能跨。",,,,,,,,,,,"In case of non-replacement of a damaged (worn) catalytic converter of a petrol-engined car, what happens?
+",,,,,,,,,,,,,,,,,"靠右原则：无论路有多空、你的速度多快，右侧车道 (Right lane) 才是你应该待的地方。左边车道只用来超车。
+","实线不可跨：白色连续实线（Continuous line）在希腊法律里就像一道墙，绝对不能压，更不能跨。
+",,,,,,,,,,,"In case of non-replacement of a damaged (worn) catalytic converter of a petrol-engined car, what happens?
 1) Nothing.
 2) Engine power is significantly increased.
 3) Increased pollutants are emitted by the car.","如果不更换汽油车已损坏（磨损）的催化转换器，会发生什么？
@@ -3554,14 +3584,17 @@ STOP (八角形)：无论有没有车，必须停死（车轮完全不动）。
 1) Speed up, overtaking the red car inform its driver of your intention, and turn left.
 2) Inform the drivers that follow of your intention, check the traffic in the left lane and pull in gradually behind the red car.","你行驶在图中道路中间车道，打算在下个路口左转。你应该怎么办？
 1) 加速超过红车，告知司机你的意图后左转。
-√ 2) 告知后方司机你的意图，检查左侧车道交通情况，逐渐切入红车后方。",,"黄色网格线：绝对不能停在里面。如果前面堵车，你即便绿灯也得在网格线外等着。","左转观察顺序：后 -> 左 -> 右。
+√ 2) 告知后方司机你的意图，检查左侧车道交通情况，逐渐切入红车后方。",,"黄色网格线：绝对不能停在里面。如果前面堵车，你即便绿灯也得在网格线外等着。
+","左转观察顺序：后 -> 左 -> 右。
 ",,,,,"Which vehicle is allowed to cross the intersection first?
 1) Vehicle 1.
 2) Vehicle 2.
 3) Vehicle 3.","哪辆车允许最先穿过路口？
 √ 1) 车辆 1。
 2) 车辆 2。
-3) 车辆 3。",,,,,,,,,,,,,,,,,,,,"选错道怎么办？：在路口如果你进错了左转道却想直行或右转，必须错就错着开（必须左转），不能原地倒车或强行变道。","黄色网格线/停止线：千万不能停在人行横道上，也不能在红灯时压过停止线。",,,,,,,,,,,,,,"The bus is immobilised at the stop. You decide to overtake it, because the left lane is clear. What should you be careful about during overtaking?
+3) 车辆 3。",,,,,,,,,,,,,,,,,,,,"选错道怎么办？：在路口如果你进错了左转道却想直行或右转，必须错就错着开（必须左转），不能原地倒车或强行变道。
+","黄色网格线/停止线：千万不能停在人行横道上，也不能在红灯时压过停止线。
+",,,,,,,,,,,,,,"The bus is immobilised at the stop. You decide to overtake it, because the left lane is clear. What should you be careful about during overtaking?
 1) Lest pedestrians cross the road carelessly, passing in front of the bus.
 2) Lest the bus moves off.
 3) Lest the bus moves off or pedestrians cross the road carelessly passing in front of the bus","公交车停在站点。你决定超越它，因为左侧车道空闲。超车时你应该注意什么？
@@ -3671,7 +3704,8 @@ STOP (八角形)：无论有没有车，必须停死（车轮完全不动）。
 2) Indication of a crossroads where priority from the right applies.","图中凸面镜的作用是什么？
 √ 1) 在视线不良的倾斜或垂直路口，及时确认车辆的移动情况。
 2) 指示右侧车辆优先的路口。",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"轮胎气压：**正确（Correct）**的气压最省油，气压低了会费油。
-","行李位置：放在**后备箱（Luggage compartment）**最省油，放车顶架（Luggage-grid）最费油。",,"In this case should you give way to an oncoming vehicle?
+","行李位置：放在**后备箱（Luggage compartment）**最省油，放车顶架（Luggage-grid）最费油。
+",,"In this case should you give way to an oncoming vehicle?
 1) YES
 2) NO","在这种情况下（路边有障碍物），你应该给对向来车让行吗？
 1) 是的
@@ -3714,8 +3748,10 @@ STOP (八角形)：无论有没有车，必须停死（车轮完全不动）。
 1) Carefully due to the danger from the frequent passage of children, and at a speed not lower than 30 km/h.
 2) Carefully due to the danger from the frequent passage of children, and at a speed not higher than 30 km/h.","在这种情况下（有儿童经过标志）你应该如何驾驶？
 1) 因儿童频繁经过，小心驾驶，车速不低于 30 公里/小时。
-√ 2) 因儿童频繁经过，小心驾驶，车速不高于 30 公里/小时。",,,,,,,,"优先权标志 (菱形黄心标志)：看到这个标志，说明你在“主路”上，除非有警察或红绿灯，否则你在路口拥有优先权。","倒三角标志 (Yield/让行)：看到它，你必须减速准备给左右两侧的车辆让行。不强制停死，但没车才能走。
-",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"驾驶方式：**及时升档（Change into higher gear）**是省油的关键，每个档位用到头（Maximum revolutions）最费油。",,,"A vehicle is coming from the opposite direction. Should it slow down in order to allow you to overtake?
+√ 2) 因儿童频繁经过，小心驾驶，车速不高于 30 公里/小时。",,,,,,,,"优先权标志 (菱形黄心标志)：看到这个标志，说明你在“主路”上，除非有警察或红绿灯，否则你在路口拥有优先权。
+","倒三角标志 (Yield/让行)：看到它，你必须减速准备给左右两侧的车辆让行。不强制停死，但没车才能走。
+",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"驾驶方式：**及时升档（Change into higher gear）**是省油的关键，每个档位用到头（Maximum revolutions）最费油。
+",,,"A vehicle is coming from the opposite direction. Should it slow down in order to allow you to overtake?
 1) YES
 2) NO","一辆车从相反方向驶来。它应该减速以方便你超车吗？
 1) 应该
@@ -3754,8 +3790,11 @@ STOP (八角形)：无论有没有车，必须停死（车轮完全不动）。
 1) 你应该鸣笛。
 √ 2) 你应该让它通过。
 3) 你应该阻止它进入你前方。",,,
-,,,,,,,,,"休息时间：希腊官方推荐每 2小时 休息一次。","速度错觉：离开高速时，你会觉得 60km/h 像 30km/h 一样慢，所以题目选 ""Slower than actually""。",,,,,,,,,,,"STOP 标志：必须完全停死。即使路上一个鬼影都没有，你也必须在白色的停止线前停一下，观察后再走。
-","闪烁黄灯：这在希腊夜晚很常见。它意味着红绿灯已停用，此时路口按交通标志（如主路标志、让行标志）来决定谁先走。如果没有标志，则按右侧先行。",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"You are completing an overtaking. In order to return to the right lane:
+,,,,,,,,,"休息时间：希腊官方推荐每 2小时 休息一次。
+","速度错觉：离开高速时，你会觉得 60km/h 像 30km/h 一样慢，所以题目选 ""Slower than actually""。
+",,,,,,,,,,,"STOP 标志：必须完全停死。即使路上一个鬼影都没有，你也必须在白色的停止线前停一下，观察后再走。
+","闪烁黄灯：这在希腊夜晚很常见。它意味着红绿灯已停用，此时路口按交通标志（如主路标志、让行标志）来决定谁先走。如果没有标志，则按右侧先行。
+",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"You are completing an overtaking. In order to return to the right lane:
 1) You should allow 5 seconds to pass.
 2) You should wait until you see the vehicle you overtook in the mirror.","你正在完成超车。为了返回右侧车道：
 1) 你应等待 5 秒钟通过。
@@ -3794,7 +3833,11 @@ STOP (八角形)：无论有没有车，必须停死（车轮完全不动）。
 1) 儿童在危险情况下会有非常快速且正确的反应。
 √ 2) 儿童可能会有不谨慎的行为。
 3) 儿童的行为会符合交通法规。",,,
-,,,,,,,,,"超车道：左侧车道只能用于超车，超完必须回右侧。","减速车道：必须先进入减速车道再踩刹车减速，不能在主干道上急刹。",,"指示牌颜色：在希腊，绿色是高速公路，蓝色是主要道路/城际道路。长途通常看这两色。","500公里开多久？：虽然理论上 5 小时，但法律和考试强调疲劳驾驶，所以要选至少 5.5 小时（预留了休息时间）。",,,,,,,,"农用机械/慢车：如果它在“主路”上，它的优先权和普通车是一样的，不能因为它慢就抢行。
+,,,,,,,,,"超车道：左侧车道只能用于超车，超完必须回右侧。
+","减速车道：必须先进入减速车道再踩刹车减速，不能在主干道上急刹。
+",,"指示牌颜色：在希腊，绿色是高速公路，蓝色是主要道路/城际道路。长途通常看这两色。
+","500公里开多久？：虽然理论上 5 小时，但法律和考试强调疲劳驾驶，所以要选至少 5.5 小时（预留了休息时间）。
+",,,,,,,,"农用机械/慢车：如果它在“主路”上，它的优先权和普通车是一样的，不能因为它慢就抢行。
 ",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"Vehicle 1 has its left indicator on in order to turn. Vehicle 2 has just overtaken on the right:
 1) It had the right to do so.
 2) It committed an offence.","1号车开了左转向灯准备转弯。2号车刚刚从右侧超越了它：
@@ -3836,7 +3879,10 @@ STOP (八角形)：无论有没有车，必须停死（车轮完全不动）。
 1) 至少 20 米。
 √ 2) 至少 100 米。
 3) 至少 50 米。",,,
-,,,,,,,,,"限速：最高 130 km/h，没有 150 这个选项。",错路处理：绝对不能倒车或掉头，必须开到 Next Exit。,,"货物伸出：记住 30% 原则。4 米的车，伸出 1.2 米是极限。","侧滑纠正：这是一个经典考点。如果车尾向右摆，方向盘也要向右打（即“转向侧滑方向”），以回正车身。",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"The visibility is excellent:
+,,,,,,,,,"限速：最高 130 km/h，没有 150 这个选项。
+",错路处理：绝对不能倒车或掉头，必须开到 Next Exit。,,"货物伸出：记住 30% 原则。4 米的车，伸出 1.2 米是极限。
+","侧滑纠正：这是一个经典考点。如果车尾向右摆，方向盘也要向右打（即“转向侧滑方向”），以回正车身。
+",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"The visibility is excellent:
 1) You can follow the vehicle ahead of you that is overtaking.
 2) You must not follow the vehicle that is overtaking.","能见度极佳：
 1) 你可以跟随前方正在超车的车辆一起超车。
@@ -3875,7 +3921,9 @@ STOP (八角形)：无论有没有车，必须停死（车轮完全不动）。
 1) 车辆 1。
 2) 车辆 2。
 √ 3) 两辆车。",,,
-,,,,,,,,,"应急车道：只能用于故障或身体不适，不能停车拍照或休息。",,,"儿童安全：12 岁以下只能坐后排并使用保护装置。",低速限制：在学校或儿童出没区域，通常限速 30 km/h。,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"This vehicle is completing the overtaking of your vehicle:
+,,,,,,,,,"应急车道：只能用于故障或身体不适，不能停车拍照或休息。
+",,,"儿童安全：12 岁以下只能坐后排并使用保护装置。
+",低速限制：在学校或儿童出没区域，通常限速 30 km/h。,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"This vehicle is completing the overtaking of your vehicle:
 1) You should maintain your speed, because the overtaking was illegal.
 2) You should slow down slightly so as to help the other vehicle avoid the danger.","这辆车正在完成对你车辆的超车（对方违规或有危险时）：
 1) 你应保持速度，因为对方超车是违法的。
@@ -4172,7 +4220,9 @@ STOP (八角形)：无论有没有车，必须停死（车轮完全不动）。
 2) There is a danger due to the passage of pedestrians.","在这种情况下你应该注意什么？
 √ 1) 由于儿童频繁经过，存在危险。
 2) 由于行人经过，存在危险。",,,
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"侧向距离：超越行人、自行车、动物，必须留出至少 1 米。","右侧超车：在希腊，只有当前车明确要左转且已经移到路左边时，你才被允许从右边超过去。",,,,,"Which prohibitions cease to have effect by this traffic sign?
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"侧向距离：超越行人、自行车、动物，必须留出至少 1 米。
+","右侧超车：在希腊，只有当前车明确要左转且已经移到路左边时，你才被允许从右边超过去。
+",,,,,"Which prohibitions cease to have effect by this traffic sign?
 1) Prohibition of exceeding the speed limit of 40 km/h.
 2) Prohibition of driving a vehicle at a distance of less than 40 m from the leading vehicle.
 3) Prohibition of the entry of a vehicle with a total weight of over 40 tons.","这个交通标志（灰色 40 标志带斜杠）使哪项禁令失效？
@@ -4330,7 +4380,8 @@ STOP (八角形)：无论有没有车，必须停死（车轮完全不动）。
 √ 1) 汽车电路故障。
 2) 蓄电池损坏。
 3) 发动机过热。",,"紧急车辆：在希腊，只有开启了警笛或警灯的车辆才拥有绝对优先权。
-","行人优先：在没有红绿灯的人行横道，行人是绝对优先的。",,,
+","行人优先：在没有红绿灯的人行横道，行人是绝对优先的。
+",,,
 ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"Which vehicles does this traffic sign concern?
 1) Vehicles carrying over a certain quantity of explosive or inflammable materials.
 2) Vehicles carrying over a certain quantity of materials that may cause water pollution.
@@ -4350,13 +4401,15 @@ STOP (八角形)：无论有没有车，必须停死（车轮完全不动）。
 √ 1) 小心靠近人行横道并给行人让行。
 2) 加速以便在行人之前通过。
 3) 停在人行横道线上。",,,,,,,,,,,,,,"12 米：离公交车站的距离。
-","20 米：离红绿灯、铁路道口（无看守）的距离。",,,,,"In the event that you realize that the footbrake pedal is very elastic, which of the following causes is more possible?
+","20 米：离红绿灯、铁路道口（无看守）的距离。
+",,,,,"In the event that you realize that the footbrake pedal is very elastic, which of the following causes is more possible?
 1) A leak of brake fluids or very low level of brake fluids.
 2) The friction surfaces may be wet.
 3) The friction surfaces may have been destroyed.","如果你发现踩下脚刹车踏板感觉非常软（有弹性），最可能的原因是：
 √ 1) 刹车油泄漏或刹车油位极低。
 2) 摩擦表面（刹车片）可能是湿的。
-3) 摩擦表面已被破坏。",,"防御性驾驶：这是希腊驾考的核心哲学，即“预防他人的错误”。","学校协管员 (School Crossing Patrol)：他们的手势具有法律效力，不听从指挥等同于闯红灯。
+3) 摩擦表面已被破坏。",,"防御性驾驶：这是希腊驾考的核心哲学，即“预防他人的错误”。
+","学校协管员 (School Crossing Patrol)：他们的手势具有法律效力，不听从指挥等同于闯红灯。
 ",,,
 ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"What does this traffic sign mean?
 1) Swimming is forbidden.
@@ -4379,7 +4432,8 @@ II (两杠)：双数月（2,4,6,8,10,12）禁停。
 ",,,,
 ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"单/双月停车 (P-39/P-40)：
 标志里有一个白杠 (I)：单数月份 (1, 3, 5, 7, 9, 11月) 禁停。
-标志里有两个白杠 (II)：双数月份 (2, 4, 6, 8, 10, 12月) 禁停。","解除限制 (End signs)：只要看到标志变成了灰色并带斜线，就代表之前的禁令（限速、禁超）结束了。",,,,,,,,,,,,,,"What does this traffic sign mean?
+标志里有两个白杠 (II)：双数月份 (2, 4, 6, 8, 10, 12月) 禁停。","解除限制 (End signs)：只要看到标志变成了灰色并带斜线，就代表之前的禁令（限速、禁超）结束了。
+",,,,,,,,,,,,,,"What does this traffic sign mean?
 1) Shipyard.
 2) Seaport.
 3) Area of ship passage.","这个交通标志（大船图案）是什么意思？
