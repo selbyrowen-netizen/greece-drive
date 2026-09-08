@@ -4,40 +4,46 @@
     <meta charset="UTF-8">
     <meta name="referrer" content="no-referrer">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>希腊驾照模拟 - V33 极速练习版</title>
+    <title>希腊驾照模拟 - V34 修正版</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     <style>
         :root { --primary: #00529b; --success: #27ae60; --error: #e74c3c; --bg: #f4f7f9; --tip-accent: #fab005; --toggle-bg: #cbd5e0; }
         body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); margin: 0; padding: 0; user-select: none; }
         
-        /* 核心逻辑：隐藏中文 */
         .hide-cn .cn-text-target { display: none !important; }
 
-        /* 导航栏 */
         .nav { background: var(--primary); color: white; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; position: sticky; top:0; z-index:100; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
         .nav h2 { margin: 0; font-size: 1.1rem; }
 
-        /* 顶部开关 */
         .toggle-container { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; cursor: pointer; background: rgba(255,255,255,0.15); padding: 5px 12px; border-radius: 20px; }
         .switch { width: 34px; height: 18px; background: var(--toggle-bg); border-radius: 10px; position: relative; transition: 0.3s; }
         .switch::after { content: ''; width: 14px; height: 14px; background: white; border-radius: 50%; position: absolute; top: 2px; left: 2px; transition: 0.3s; }
         .active .switch { background: var(--success); }
         .active .switch::after { left: 18px; }
 
-        .container { max-width: 1100px; margin: 15px auto; padding: 0 10px; padding-bottom: 120px; }
+        .container { max-width: 1100px; margin: 10px auto; padding: 0 10px; padding-bottom: 120px; }
         
-        /* 首页板块标题 */
-        .section-title { font-size: 1.2rem; font-weight: bold; color: var(--primary); margin: 25px 0 15px 5px; display: flex; align-items: center; gap: 10px; }
-        .section-title::before { content: ''; width: 6px; height: 20px; background: var(--primary); border-radius: 3px; }
+        /* 模式切换 */
+        .mode-tabs { display: flex; background: white; border-radius: 12px; margin-bottom: 20px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .tab { flex: 1; padding: 12px; text-align: center; cursor: pointer; font-weight: bold; font-size: 0.9rem; color: #666; border-bottom: 3px solid transparent; }
+        .tab.active { color: var(--primary); border-bottom-color: var(--primary); background: #f0f7ff; }
+
+        /* 大标题与总进度 */
+        .section-header { display: flex; align-items: center; gap: 15px; margin: 25px 0 15px 5px; flex-wrap: wrap; }
+        .section-title { font-size: 1.2rem; font-weight: bold; color: var(--primary); white-space: nowrap; }
+        .total-progress-box { flex: 1; min-width: 200px; display: flex; align-items: center; gap: 10px; background: #e2e8f0; padding: 4px 12px; border-radius: 20px; }
+        .total-progress-bar { flex: 1; height: 8px; background: #fff; border-radius: 4px; overflow: hidden; }
+        .total-progress-fill { height: 100%; background: var(--success); transition: width 0.5s; }
+        .total-text { font-size: 0.8rem; font-weight: bold; color: #4a5568; white-space: nowrap; }
 
         /* 专题列表 2列排版 */
         .cat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 30px; }
-        .cat-item { background: white; border-radius: 12px; padding: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); cursor: pointer; transition: 0.2s; border: 1px solid transparent; }
-        .cat-item:hover { border-color: var(--primary); transform: translateY(-2px); }
+        .cat-item { background: white; border-radius: 12px; padding: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); cursor: pointer; border: 1px solid transparent; }
+        .cat-item:hover { border-color: var(--primary); }
         .progress-bar { height: 6px; background: #eee; border-radius: 3px; overflow: hidden; margin-top: 10px; }
         .progress-fill { height: 100%; background: var(--success); }
 
-        /* 题目卡片布局 */
+        /* 题目卡片 */
         .q-card { background: white; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); padding: 25px; margin-bottom: 15px; display: grid; grid-template-columns: 1.5fr 1fr; gap: 30px; min-height: 520px; }
         .q-text-section { grid-column: 1; display: flex; flex-direction: column; }
         .q-img-section { grid-column: 2; display: flex; align-items: center; justify-content: center; background: #fafafa; border-radius: 15px; border: 1px solid #eee; height: 350px; position: sticky; top: 70px; }
@@ -51,21 +57,17 @@
         .opt.correct { background: #e6fffa !important; border-color: var(--success) !important; color: #1a4731; font-weight: bold; }
         .opt.wrong { background: #fff5f5 !important; border-color: var(--error) !important; color: #742a2a; }
         
-        /* 选项内文字 */
         .opt-idx { font-weight: bold; margin-right: 12px; color: var(--primary); }
         .opt-text-en { font-size: 1.1rem; font-weight: 500; display: block; }
         .opt-text-cn { font-size: 1rem; color: #666; display: block; }
 
-        /* 卡片内导航按钮 */
         .card-nav { display: flex; gap: 15px; margin-top: 20px; padding-top: 15px; border-top: 1px solid #f0f0f0; }
-        .btn-nav { flex: 1; padding: 15px; border: none; border-radius: 12px; cursor: pointer; font-weight: bold; font-size: 1rem; background: var(--primary); color: white; box-shadow: 0 4px 6px rgba(0,82,155,0.2); }
-        .btn-nav:disabled { background: #cbd5e0; opacity: 0.6; cursor: not-allowed; }
+        .btn-nav { flex: 1; padding: 15px; border: none; border-radius: 12px; cursor: pointer; font-weight: bold; font-size: 1rem; background: var(--primary); color: white; }
+        .btn-nav:disabled { background: #cbd5e0; opacity: 0.6; }
 
-        /* 底部操作栏 */
         .footer { position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 -3px 15px rgba(0,0,0,0.05); z-index:100; }
         .btn-exit { padding: 12px 25px; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; background: #4a5568; color: white; }
 
-        /* 💡 悬浮秘籍按钮 */
         .float-group { position: fixed; bottom: 85px; right: 20px; display: flex; flex-direction: column; gap: 12px; z-index: 99; }
         .circle-btn { width: 56px; height: 56px; border-radius: 28px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(0,0,0,0.2); cursor: pointer; border: none; }
 
@@ -81,7 +83,7 @@
 <body>
 
 <div class="nav">
-    <div class="nav-left"><h2>希腊驾照中英对照刷题</h2></div>
+    <div class="nav-left"><h2>希腊驾照模拟练习</h2></div>
     <div class="nav-right">
         <div class="toggle-container" id="cnToggleNav" onclick="toggleCN()">
             <span>中文对照</span>
@@ -91,101 +93,95 @@
 </div>
 
 <div class="container">
+    <!-- 顶栏切换 -->
+    <div id="topTabs" class="mode-tabs">
+        <div id="tab-home" class="tab active" onclick="location.reload()">所有专题</div>
+        <div id="tab-mistake" class="tab" onclick="startMistakes()">错题本 <span id="mCount"></span></div>
+        <div id="tab-exam" class="tab" onclick="startExam()">模拟考试</div>
+    </div>
+
     <!-- 首页列表页 -->
     <div id="listView">
-        <div class="section-title">🚗 汽车考题</div>
-        <div id="carGrid" class="cat-grid">正在加载汽车数据...</div>
+        <div class="section-header">
+            <div class="section-title">🚗 汽车考题</div>
+            <div class="total-progress-box">
+                <div class="total-progress-bar"><div id="carTotalBar" class="total-progress-fill" style="width:0%"></div></div>
+                <div id="carTotalText" class="total-text">0% [0/0]</div>
+            </div>
+        </div>
+        <div id="carGrid" class="cat-grid">加载中...</div>
         
-        <div class="section-title">🏍️ 摩托考题</div>
-        <div id="motoGrid" class="cat-grid">正在加载摩托数据...</div>
+        <div class="section-header">
+            <div class="section-title">🏍️ 摩托考题</div>
+            <div class="total-progress-box">
+                <div class="total-progress-bar"><div id="motoTotalBar" class="total-progress-fill" style="width:0%"></div></div>
+                <div id="motoTotalText" class="total-text">0% [0/0]</div>
+            </div>
+        </div>
+        <div id="motoGrid" class="cat-grid">加载中...</div>
     </div>
 
-    <!-- 练习区 -->
-    <div id="quizView" class="hidden">
-        <div id="quizContent"></div>
-    </div>
-
-    <!-- 结算页 -->
-    <div id="resultView" class="hidden" style="text-align:center; padding:40px; background:white; border-radius:15px;"></div>
+    <div id="quizView" class="hidden"><div id="quizContent"></div></div>
+    <div id="resultView" class="hidden"></div>
 </div>
 
-<!-- 💡 悬浮按钮组 -->
 <div id="floatGroup" class="float-group hidden">
     <button class="circle-btn" style="background:#fff; color:var(--primary); border:2px solid var(--primary)" onclick="toggleCN()">中</button>
     <button class="circle-btn" style="background:var(--tip-accent); color:white" onclick="toggleTips(true)">💡</button>
 </div>
 
-<!-- 底部导航 -->
 <div id="quizFooter" class="footer hidden">
     <button class="btn-exit" onclick="location.reload()">退出练习</button>
     <div id="pageInfo" style="font-weight:bold; font-size:1rem; color:#4a5568"></div>
-    <div style="width:100px"></div> <!-- 占位保持平衡 -->
+    <div style="width:100px"></div>
 </div>
 
-<!-- 秘籍层 -->
 <div id="tipOverlay" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:1000; display:none; align-items:center; justify-content:center; backdrop-filter:blur(5px);" onclick="this.style.display='none'">
     <div style="background:white; width:90%; max-width:550px; max-height:80vh; border-radius:25px; padding:30px; overflow-y:auto;" onclick="event.stopPropagation()">
-        <h3 style="margin-top:0">💡 本章解题秘籍</h3>
+        <h3 style="margin-top:0">💡 解题秘籍</h3>
         <div id="tipContent"></div>
-        <button class="btn-nav" style="width:100%; margin-top:20px" onclick="document.getElementById('tipOverlay').style.display='none'">关闭</button>
     </div>
 </div>
 
 <script>
-    const HISTORY_KEY = 'g_hist_v33';
-    const MISTAKE_KEY = 'g_mist_v33';
-    const CN_KEY = 'g_show_cn_v33';
+    const HISTORY_KEY = 'g_hist_v34';
+    const MISTAKE_KEY = 'g_mist_v34';
+    const CN_KEY = 'g_show_cn_v34';
 
-    let allCarData = [], allMotoData = [], currentQuestions = [], currentIdx = 0;
-    let currentTopicTips = [];
+    let allCarData = [], allMotoData = [], currentQuestions = [], currentIdx = 0, currentMode = 'list';
     let showChinese = localStorage.getItem(CN_KEY) !== 'false';
 
     window.onload = function() {
         updateCNUI();
-        // 同时加载两个文件
-        Promise.all([
-            fetchCSV("data.csv"),
-            fetchCSV("datamoto.csv")
-        ]).then(([carRes, motoRes]) => {
-            allCarData = parseCSV(carRes, "汽车");
-            allMotoData = parseCSV(motoRes, "摩托");
+        Promise.all([fetchCSV("data.csv"), fetchCSV("datamoto.csv")])
+        .then(([car, moto]) => {
+            allCarData = parseCSV(car, "汽车");
+            allMotoData = parseCSV(moto, "摩托");
             renderGrids();
         });
     };
 
-    function fetchCSV(url) {
-        return new Promise(resolve => {
-            Papa.parse(url, { download: true, skipEmptyLines: true, complete: res => resolve(res.data) });
-        });
-    }
+    function fetchCSV(url) { return new Promise(resolve => { Papa.parse(url, { download: true, skipEmptyLines: true, complete: res => resolve(res.data) }); }); }
 
     function parseCSV(data, type) {
         let list = [];
         for (let col = 0; col < data[0].length; col += 3) {
             let catCn = data[0][col+1] || "";
             if (!data[0][col]) continue;
-            let qCounter = 1;
-            let topicTips = [];
+            let tips = [];
             for (let row = 1; row < data.length; row++) {
                 let cellEn = data[row][col], cellCn = data[row][col+1];
                 if (!cellEn || cellEn.trim().length < 2) continue;
                 if (cellEn.includes("1)")) {
                     let q = splitLogic(cellEn, cellCn);
                     if (q) {
-                        q.cat = catCn.trim();
-                        q.prefix = q.cat.split("专题")[0].trim();
-                        q.rowNum = row;
-                        q.uid = catCn + "_" + row;
-                        q.type = type;
+                        q.cat = catCn.trim(); q.prefix = q.cat.split("专题")[0].trim();
+                        q.rowNum = row; q.uid = catCn + "_" + row; q.type = type;
                         list.push(q);
-                        qCounter++;
                     }
-                } else {
-                    topicTips.push({ cn: cellCn, en: cellEn });
-                }
+                } else { tips.push({ cn: cellCn, en: cellEn }); }
             }
-            // 绑定秘籍到该专题的每个题目上 (简单处理)
-            list.filter(q => q.cat === catCn.trim()).forEach(q => q.allTips = topicTips);
+            list.filter(q => q.cat === catCn.trim()).forEach(q => q.allTips = tips);
         }
         return list;
     }
@@ -204,9 +200,17 @@
 
     function renderGrids() {
         const hist = JSON.parse(localStorage.getItem(HISTORY_KEY) || '{}');
-        const makeHtml = (data) => {
+        const mIds = JSON.parse(localStorage.getItem(MISTAKE_KEY) || '[]');
+        document.getElementById('mCount').innerText = mIds.length > 0 ? `(${mIds.length})` : "";
+
+        const updateSection = (data, gridId, barId, textId) => {
             const cats = [...new Set(data.map(d => d.cat))];
-            return cats.map(c => {
+            let totalQ = data.length, totalDone = data.filter(d => hist[d.uid]).length;
+            let totalPerc = Math.round((totalDone / totalQ) * 100) || 0;
+            document.getElementById(barId).style.width = totalPerc + "%";
+            document.getElementById(textId).innerText = `${totalPerc}% [${totalDone}/${totalQ}]`;
+
+            document.getElementById(gridId).innerHTML = cats.map(c => {
                 const sub = data.filter(d => d.cat === c);
                 const done = sub.filter(d => hist[d.uid]).length;
                 const perc = Math.round((done / sub.length) * 100);
@@ -216,14 +220,36 @@
                 </div>`;
             }).join("");
         };
-        document.getElementById('carGrid').innerHTML = makeHtml(allCarData);
-        document.getElementById('motoGrid').innerHTML = makeHtml(allMotoData);
+        updateSection(allCarData, 'carGrid', 'carTotalBar', 'carTotalText');
+        updateSection(allMotoData, 'motoGrid', 'motoTotalBar', 'motoTotalText');
     }
 
     function startPractice(cat, type) {
+        currentMode = 'practice';
         currentQuestions = (type === '汽车' ? allCarData : allMotoData).filter(d => d.cat === cat);
-        currentIdx = 0;
+        currentIdx = 0; enterQuiz();
+    }
+
+    function startMistakes() {
+        const mIds = JSON.parse(localStorage.getItem(MISTAKE_KEY) || '[]');
+        if (mIds.length === 0) return alert("没找到错题！");
+        currentMode = 'mistake';
+        currentQuestions = [...allCarData, ...allMotoData].filter(d => mIds.includes(d.uid));
+        currentIdx = 0; enterQuiz();
+        document.getElementById('tab-mistake').className = 'tab active';
+        document.getElementById('tab-home').className = 'tab';
+    }
+
+    function startExam() {
+        currentMode = 'exam';
+        currentQuestions = [...allCarData].sort(() => 0.5 - Math.random()).slice(0, 30);
+        currentQuestions.forEach(q => delete q.userAns);
+        currentIdx = 0; enterQuiz();
+    }
+
+    function enterQuiz() {
         document.getElementById('listView').classList.add('hidden');
+        document.getElementById('topTabs').classList.add('hidden');
         document.getElementById('quizView').classList.remove('hidden');
         document.getElementById('quizFooter').classList.remove('hidden');
         document.getElementById('floatGroup').classList.remove('hidden');
@@ -243,22 +269,22 @@
                     <div class="options">
                         ${q.options.map((o, i) => {
                             let cls = isAnsd ? (i === q.ans ? "correct" : (i === q.userAns ? "wrong" : "")) : "";
-                            return `<div class="opt ${cls}" onclick="handleCheck(${i})"><span class="opt-idx">${i+1})</span><div style="flex:1"><span class="opt-text-en">${o.en}</span><span class="opt-text-cn cn-text-target">${o.cn}</span></div></div>`;
+                            return `<div class="opt ${cls}" onclick="handleCheck(${i})">
+                                <span class="opt-idx">${i+1})</span>
+                                <div style="flex:1"><span class="opt-text-en">${o.en}</span><span class="opt-text-cn cn-text-target">${o.cn}</span></div>
+                            </div>`;
                         }).join("")}
                     </div>
-                    <!-- 核心修改：按钮紧贴选项 -->
                     <div class="card-nav">
                         <button class="btn-nav btn-grey" onclick="moveQ(-1)" ${currentIdx===0?'disabled':''}>上一题</button>
                         <button class="btn-nav" onclick="moveQ(1)">下一题</button>
                     </div>
                 </div>
                 <div class="q-img-section" id="imgBox">
-                    <img id="qImg" src="${fileName}" onload="this.parentElement.classList.add('has-img'); this.parentElement.style.display='flex'" onerror="tryS(this, '${fileName}')">
+                    <img src="${fileName}" onload="this.parentElement.classList.add('has-img'); this.parentElement.style.display='flex'" onerror="tryS(this, '${fileName}')">
                 </div>
             </div>`;
-        
-        currentTopicTips = q.allTips || [];
-        document.getElementById('tipContent').innerHTML = currentTopicTips.length ? currentTopicTips.map(t => `<div class="tip-item"><b>• ${t.cn}</b><br><small>${t.en}</small></div>`).join("") : "无总结";
+        document.getElementById('tipContent').innerHTML = q.allTips && q.allTips.length ? q.allTips.map(t => `<div class="tip-item"><b>• ${t.cn}</b><br><small>${t.en}</small></div>`).join("") : "无总结";
     }
 
     function tryS(img, enc) {
@@ -270,13 +296,27 @@
         const q = currentQuestions[currentIdx]; if (q.userAns !== undefined) return;
         q.userAns = idx;
         const hist = JSON.parse(localStorage.getItem(HISTORY_KEY) || '{}');
-        if (idx === q.ans) { hist[q.uid] = true; localStorage.setItem(HISTORY_KEY, JSON.stringify(hist)); }
+        const mIds = JSON.parse(localStorage.getItem(MISTAKE_KEY) || '[]');
+        if (idx === q.ans) { 
+            hist[q.uid] = true; localStorage.setItem(HISTORY_KEY, JSON.stringify(hist)); 
+        } else {
+            if (!mIds.includes(q.uid)) { mIds.push(q.uid); localStorage.setItem(MISTAKE_KEY, JSON.stringify(mIds)); }
+        }
         renderQuestion();
     }
 
     function moveQ(s) {
+        if (currentMode === 'exam' && currentIdx === currentQuestions.length - 1 && s > 0) return finishExam();
         currentIdx = (currentIdx + s + currentQuestions.length) % currentQuestions.length;
         renderQuestion(); window.scrollTo(0,0);
+    }
+
+    function finishExam() {
+        const sc = currentQuestions.filter(q => q.userAns === q.ans).length;
+        document.getElementById('quizView').classList.add('hidden');
+        document.getElementById('quizFooter').classList.add('hidden');
+        const rv = document.getElementById('resultView'); rv.classList.remove('hidden');
+        rv.innerHTML = `<div style="font-size:3rem; font-weight:bold; color:var(--primary)">${sc}/30</div><h2>${sc >= 29 ? '🎉 通过！' : '❌ 未及格'}</h2><button class="btn-nav" onclick="location.reload()">返回首页</button>`;
     }
 
     function toggleCN() { showChinese = !showChinese; localStorage.setItem(CN_KEY, showChinese); updateCNUI(); }
