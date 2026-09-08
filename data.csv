@@ -3907,8 +3907,8 @@ STOP (八角形)：无论有没有车，必须停死（车轮完全不动）。
 3) 最低限速 60 公里/小时。",,,,,,,,,,,,,,"The parking of this vehicle is:
 1) Allowed.
 2) Forbidden.","这辆车的停放是：
-1) 允许的。
-√ 2) 禁止的。",,,,,"If you notice that a lamp of one of the lights of your vehicle does not switch on, you should first check:
+√ 1) 允许的。
+2) 禁止的。",,,,,"If you notice that a lamp of one of the lights of your vehicle does not switch on, you should first check:
 1) The battery.
 2) The lamp.
 3) The generator or the alternator.","如果你发现车辆的一个灯不亮了，你应该首先检查：
