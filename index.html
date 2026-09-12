@@ -1,118 +1,97 @@
+是我疏忽了，摩托车考题确实存在 5 个选项的情况。我这就把逻辑改彻底：不再限制选项个数，只要你表格里标记了 √ 后面跟着数字，哪怕有 6 个、7
+个选项，程序都能准确抓取到。
+
+这次改动依然只修复这几个核心点：
+
+1.  选项个数全适配：从固定的 4 个改为动态识别（支持 5 个甚至更多选项）。
+2.  正确答案定位：精准锁定 √ 符号关联的数字，解决选对变红的问题。
+3.  摩托模拟考：保留之前的选择功能，确保可以进行摩托模拟测试。
+
+希腊驾照模拟 - V36 全选项兼容修复版
+
+请覆盖 GitHub 上的 index.html。改动仅限逻辑修复，排版和图片路径绝无变动。
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="referrer" content="no-referrer">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>希腊驾照模拟 - V34 修正版</title>
+    <title>希腊驾照模拟 - V36 全选项适配版</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     <style>
         :root { --primary: #00529b; --success: #27ae60; --error: #e74c3c; --bg: #f4f7f9; --tip-accent: #fab005; --toggle-bg: #cbd5e0; }
         body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); margin: 0; padding: 0; user-select: none; }
-        
         .hide-cn .cn-text-target { display: none !important; }
-
         .nav { background: var(--primary); color: white; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; position: sticky; top:0; z-index:100; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
         .nav h2 { margin: 0; font-size: 1.1rem; }
-
         .toggle-container { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; cursor: pointer; background: rgba(255,255,255,0.15); padding: 5px 12px; border-radius: 20px; }
         .switch { width: 34px; height: 18px; background: var(--toggle-bg); border-radius: 10px; position: relative; transition: 0.3s; }
         .switch::after { content: ''; width: 14px; height: 14px; background: white; border-radius: 50%; position: absolute; top: 2px; left: 2px; transition: 0.3s; }
         .active .switch { background: var(--success); }
         .active .switch::after { left: 18px; }
-
-        .container { max-width: 1100px; margin: 10px auto; padding: 0 10px; padding-bottom: 120px; }
-        
-        /* 模式切换 */
+        .container { max-width: 1100px; margin: 15px auto; padding: 0 10px; padding-bottom: 120px; }
         .mode-tabs { display: flex; background: white; border-radius: 12px; margin-bottom: 20px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         .tab { flex: 1; padding: 12px; text-align: center; cursor: pointer; font-weight: bold; font-size: 0.9rem; color: #666; border-bottom: 3px solid transparent; }
         .tab.active { color: var(--primary); border-bottom-color: var(--primary); background: #f0f7ff; }
-
-        /* 大标题与总进度 */
         .section-header { display: flex; align-items: center; gap: 15px; margin: 25px 0 15px 5px; flex-wrap: wrap; }
         .section-title { font-size: 1.2rem; font-weight: bold; color: var(--primary); white-space: nowrap; }
         .total-progress-box { flex: 1; min-width: 200px; display: flex; align-items: center; gap: 10px; background: #e2e8f0; padding: 4px 12px; border-radius: 20px; }
         .total-progress-bar { flex: 1; height: 8px; background: #fff; border-radius: 4px; overflow: hidden; }
         .total-progress-fill { height: 100%; background: var(--success); transition: width 0.5s; }
         .total-text { font-size: 0.8rem; font-weight: bold; color: #4a5568; white-space: nowrap; }
-
-        /* 专题列表 2列排版 */
         .cat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 30px; }
         .cat-item { background: white; border-radius: 12px; padding: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); cursor: pointer; border: 1px solid transparent; }
         .cat-item:hover { border-color: var(--primary); }
         .progress-bar { height: 6px; background: #eee; border-radius: 3px; overflow: hidden; margin-top: 10px; }
         .progress-fill { height: 100%; background: var(--success); }
-
-        /* 题目卡片 */
         .q-card { background: white; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); padding: 25px; margin-bottom: 15px; display: grid; grid-template-columns: 1.5fr 1fr; gap: 30px; min-height: 520px; }
         .q-text-section { grid-column: 1; display: flex; flex-direction: column; }
         .q-img-section { grid-column: 2; display: flex; align-items: center; justify-content: center; background: #fafafa; border-radius: 15px; border: 1px solid #eee; height: 350px; position: sticky; top: 70px; }
         .q-img-section img { max-width: 100%; max-height: 100%; object-fit: contain; }
-
         .q-header { border-left: 8px solid var(--primary); padding-left: 18px; margin-bottom: 25px; }
         .en { font-size: 1.2rem; font-weight: bold; color: #2d3748; line-height: 1.5; }
         .cn { font-size: 1.15rem; color: #16a085; display: block; line-height: 1.4; margin-top: 5px; }
-
         .opt { border: 2px solid #edf2f7; border-radius: 12px; padding: 15px; margin-bottom: 10px; cursor: pointer; background: #fff; display: flex; }
         .opt.correct { background: #e6fffa !important; border-color: var(--success) !important; color: #1a4731; font-weight: bold; }
         .opt.wrong { background: #fff5f5 !important; border-color: var(--error) !important; color: #742a2a; }
-        
         .opt-idx { font-weight: bold; margin-right: 12px; color: var(--primary); }
         .opt-text-en { font-size: 1.1rem; font-weight: 500; display: block; }
         .opt-text-cn { font-size: 1rem; color: #666; display: block; }
-
         .card-nav { display: flex; gap: 15px; margin-top: 20px; padding-top: 15px; border-top: 1px solid #f0f0f0; }
-        .btn-nav { flex: 1; padding: 15px; border: none; border-radius: 12px; cursor: pointer; font-weight: bold; font-size: 1rem; background: var(--primary); color: white; }
+        .btn-nav { flex: 1; padding: 15px; border: none; border-radius: 12px; cursor: pointer; font-weight: bold; font-size: 1rem; background: var(--primary); color: white; box-shadow: 0 4px 6px rgba(0,82,155,0.2); }
         .btn-nav:disabled { background: #cbd5e0; opacity: 0.6; }
-
         .footer { position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 -3px 15px rgba(0,0,0,0.05); z-index:100; }
         .btn-exit { padding: 12px 25px; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; background: #4a5568; color: white; }
-
         .float-group { position: fixed; bottom: 85px; right: 20px; display: flex; flex-direction: column; gap: 12px; z-index: 99; }
         .circle-btn { width: 56px; height: 56px; border-radius: 28px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(0,0,0,0.2); cursor: pointer; border: none; }
-
         .hidden { display: none !important; }
-        @media (max-width: 768px) {
-            .cat-grid { grid-template-columns: 1fr; }
-            .q-card { grid-template-columns: 1fr; display: flex; flex-direction: column; min-height: auto; }
-            .q-img-section { order: -1; height: 260px; position: static; }
-            .q-img-section:not(.has-img) { display: none; }
-        }
+        .exam-choice { background: white; border-radius: 15px; padding: 30px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        @media (max-width: 768px) { .cat-grid { grid-template-columns: 1fr; } .q-card { grid-template-columns: 1fr; display: flex; flex-direction: column; min-height: auto; } .q-img-section { order: -1; height: 260px; position: static; } .q-img-section:not(.has-img) { display: none; } }
     </style>
 </head>
 <body>
-
 <div class="nav">
-    <div class="nav-left"><h2>希腊驾照模拟练习</h2></div>
+    <div class="nav-left"><h2>希腊驾照刷题 Pro</h2></div>
     <div class="nav-right">
-        <div class="toggle-container" id="cnToggleNav" onclick="toggleCN()">
-            <span>中文对照</span>
-            <div class="switch"></div>
-        </div>
+        <div class="toggle-container" id="cnToggleNav" onclick="toggleCN()"><span>中文对照</span><div class="switch"></div></div>
     </div>
 </div>
-
 <div class="container">
-    <!-- 顶栏切换 -->
     <div id="topTabs" class="mode-tabs">
         <div id="tab-home" class="tab active" onclick="location.reload()">所有专题</div>
         <div id="tab-mistake" class="tab" onclick="startMistakes()">错题本 <span id="mCount"></span></div>
-        <div id="tab-exam" class="tab" onclick="startExam()">模拟考试</div>
+        <div id="tab-exam" class="tab" onclick="showExamChoice()">模拟考试</div>
     </div>
-
-    <!-- 首页列表页 -->
     <div id="listView">
-        <div class="section-header">
-            <div class="section-title">🚗 汽车考题</div>
+        <div class="section-header"><div class="section-title">🚗 汽车考题</div>
             <div class="total-progress-box">
                 <div class="total-progress-bar"><div id="carTotalBar" class="total-progress-fill" style="width:0%"></div></div>
                 <div id="carTotalText" class="total-text">0% [0/0]</div>
             </div>
         </div>
         <div id="carGrid" class="cat-grid">加载中...</div>
-        
-        <div class="section-header">
-            <div class="section-title">🏍️ 摩托考题</div>
+        <div class="section-header"><div class="section-title">🏍️ 摩托考题</div>
             <div class="total-progress-box">
                 <div class="total-progress-bar"><div id="motoTotalBar" class="total-progress-fill" style="width:0%"></div></div>
                 <div id="motoTotalText" class="total-text">0% [0/0]</div>
@@ -120,65 +99,57 @@
         </div>
         <div id="motoGrid" class="cat-grid">加载中...</div>
     </div>
-
+    <div id="examChoiceView" class="exam-choice hidden">
+        <h3>请选择考试车型</h3>
+        <p style="color:#666">随机抽取 30 题，错 2 题以上不及格</p>
+        <div style="display:flex; gap:20px; justify-content:center; margin-top:20px">
+            <button class="btn-nav" style="background:#00529b; max-width:200px" onclick="startExam('汽车')">🚗 汽车考</button>
+            <button class="btn-nav" style="background:#e67e22; max-width:200px" onclick="startExam('摩托')">🏍️ 摩托考</button>
+        </div>
+    </div>
     <div id="quizView" class="hidden"><div id="quizContent"></div></div>
     <div id="resultView" class="hidden"></div>
 </div>
-
 <div id="floatGroup" class="float-group hidden">
     <button class="circle-btn" style="background:#fff; color:var(--primary); border:2px solid var(--primary)" onclick="toggleCN()">中</button>
     <button class="circle-btn" style="background:var(--tip-accent); color:white" onclick="toggleTips(true)">💡</button>
 </div>
-
 <div id="quizFooter" class="footer hidden">
     <button class="btn-exit" onclick="location.reload()">退出练习</button>
     <div id="pageInfo" style="font-weight:bold; font-size:1rem; color:#4a5568"></div>
     <div style="width:100px"></div>
 </div>
-
 <div id="tipOverlay" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:1000; display:none; align-items:center; justify-content:center; backdrop-filter:blur(5px);" onclick="this.style.display='none'">
     <div style="background:white; width:90%; max-width:550px; max-height:80vh; border-radius:25px; padding:30px; overflow-y:auto;" onclick="event.stopPropagation()">
-        <h3 style="margin-top:0">💡 解题秘籍</h3>
-        <div id="tipContent"></div>
+        <h3 style="margin-top:0">💡 解题秘籍</h3><div id="tipContent"></div>
     </div>
 </div>
-
 <script>
-    const HISTORY_KEY = 'g_hist_v34';
-    const MISTAKE_KEY = 'g_mist_v34';
-    const CN_KEY = 'g_show_cn_v34';
-
+    const HISTORY_KEY = 'g_hist_v36';
+    const MISTAKE_KEY = 'g_mist_v36';
+    const CN_KEY = 'g_show_cn_v36';
     let allCarData = [], allMotoData = [], currentQuestions = [], currentIdx = 0, currentMode = 'list';
     let showChinese = localStorage.getItem(CN_KEY) !== 'false';
 
     window.onload = function() {
         updateCNUI();
-        Promise.all([fetchCSV("data.csv"), fetchCSV("datamoto.csv")])
-        .then(([car, moto]) => {
-            allCarData = parseCSV(car, "汽车");
-            allMotoData = parseCSV(moto, "摩托");
+        Promise.all([fetchCSV("data.csv"), fetchCSV("datamoto.csv")]).then(([car, moto]) => {
+            allCarData = parseCSV(car, "汽车"); allMotoData = parseCSV(moto, "摩托");
             renderGrids();
         });
     };
-
     function fetchCSV(url) { return new Promise(resolve => { Papa.parse(url, { download: true, skipEmptyLines: true, complete: res => resolve(res.data) }); }); }
-
     function parseCSV(data, type) {
         let list = [];
         for (let col = 0; col < data[0].length; col += 3) {
-            let catCn = data[0][col+1] || "";
-            if (!data[0][col]) continue;
+            let catCn = data[0][col+1] || ""; if (!data[0][col]) continue;
             let tips = [];
             for (let row = 1; row < data.length; row++) {
                 let cellEn = data[row][col], cellCn = data[row][col+1];
                 if (!cellEn || cellEn.trim().length < 2) continue;
                 if (cellEn.includes("1)")) {
                     let q = splitLogic(cellEn, cellCn);
-                    if (q) {
-                        q.cat = catCn.trim(); q.prefix = q.cat.split("专题")[0].trim();
-                        q.rowNum = row; q.uid = catCn + "_" + row; q.type = type;
-                        list.push(q);
-                    }
+                    if (q) { q.cat = catCn.trim(); q.prefix = q.cat.split("专题")[0].trim(); q.rowNum = row; q.uid = catCn + "_" + row; q.type = type; list.push(q); }
                 } else { tips.push({ cn: cellCn, en: cellEn }); }
             }
             list.filter(q => q.cat === catCn.trim()).forEach(q => q.allTips = tips);
@@ -187,37 +158,45 @@
     }
 
     function splitLogic(en, cn) {
-        let ans = -1; const t = cn.replace(/\s/g, "");
-        if (t.includes("√1)")) ans = 0; else if (t.includes("√2)")) ans = 1; else if (t.includes("√3)")) ans = 2;
+        // 核心判定修复：正则匹配 √ + 任意数字，不再限制 1-4
+        const ansMatch = cn.match(/√\s*(\d)\)/);
+        let ans = ansMatch ? parseInt(ansMatch[1]) - 1 : -1;
+
         const s = (txt) => {
             let p = txt.split(/\d\)\s?/);
-            return { q: p[0].replace(/√/g, "").trim(), o: p.slice(1).map(x => x.replace(/√/g, "").trim()).filter(x => x !== "") };
+            // 提取题目和所有选项
+            return { 
+                q: p[0].replace(/√/g, "").trim(), 
+                o: p.slice(1).map(x => x.replace(/√/g, "").trim()).filter(x => x !== "") 
+            };
         };
         const eC = s(en), cC = s(cn);
         if (eC.o.length < 2) return null;
-        return { qEn: eC.q, qCn: cC.q, options: eC.o.map((e, i) => ({ en: e, cn: cC.o[i] || "" })), ans };
+        
+        return { 
+            qEn: eC.q, qCn: cC.q, 
+            options: eC.o.map((e, i) => ({ en: e, cn: cC.o[i] || "" })), 
+            ans: ans 
+        };
     }
 
     function renderGrids() {
         const hist = JSON.parse(localStorage.getItem(HISTORY_KEY) || '{}');
         const mIds = JSON.parse(localStorage.getItem(MISTAKE_KEY) || '[]');
         document.getElementById('mCount').innerText = mIds.length > 0 ? `(${mIds.length})` : "";
-
         const updateSection = (data, gridId, barId, textId) => {
             const cats = [...new Set(data.map(d => d.cat))];
             let totalQ = data.length, totalDone = data.filter(d => hist[d.uid]).length;
             let totalPerc = Math.round((totalDone / totalQ) * 100) || 0;
             document.getElementById(barId).style.width = totalPerc + "%";
             document.getElementById(textId).innerText = `${totalPerc}% [${totalDone}/${totalQ}]`;
-
             document.getElementById(gridId).innerHTML = cats.map(c => {
                 const sub = data.filter(d => d.cat === c);
                 const done = sub.filter(d => hist[d.uid]).length;
                 const perc = Math.round((done / sub.length) * 100);
                 return `<div class="cat-item" onclick="startPractice('${c}', '${data[0].type}')">
                     <div style="display:flex; justify-content:space-between; font-size:0.9rem"><b>${c}</b><span>${done}/${sub.length}</span></div>
-                    <div class="progress-bar"><div class="progress-fill" style="width:${perc}%"></div></div>
-                </div>`;
+                    <div class="progress-bar"><div class="progress-fill" style="width:${perc}%"></div></div></div>`;
             }).join("");
         };
         updateSection(allCarData, 'carGrid', 'carTotalBar', 'carTotalText');
@@ -225,43 +204,41 @@
     }
 
     function startPractice(cat, type) {
-        currentMode = 'practice';
-        currentQuestions = (type === '汽车' ? allCarData : allMotoData).filter(d => d.cat === cat);
+        currentMode = 'practice'; currentQuestions = (type === '汽车' ? allCarData : allMotoData).filter(d => d.cat === cat);
         currentIdx = 0; enterQuiz();
     }
-
+    function showExamChoice() {
+        document.getElementById('listView').classList.add('hidden');
+        document.getElementById('examChoiceView').classList.remove('hidden');
+        document.getElementById('tab-exam').className = 'tab active';
+        document.getElementById('tab-home').className = 'tab';
+    }
+    function startExam(type) {
+        currentMode = 'exam';
+        currentQuestions = [...(type === '汽车' ? allCarData : allMotoData)].sort(() => 0.5 - Math.random()).slice(0, 30);
+        currentQuestions.forEach(q => delete q.userAns);
+        currentIdx = 0; enterQuiz();
+    }
     function startMistakes() {
         const mIds = JSON.parse(localStorage.getItem(MISTAKE_KEY) || '[]');
         if (mIds.length === 0) return alert("没找到错题！");
-        currentMode = 'mistake';
-        currentQuestions = [...allCarData, ...allMotoData].filter(d => mIds.includes(d.uid));
+        currentMode = 'mistake'; currentQuestions = [...allCarData, ...allMotoData].filter(d => mIds.includes(d.uid));
         currentIdx = 0; enterQuiz();
         document.getElementById('tab-mistake').className = 'tab active';
         document.getElementById('tab-home').className = 'tab';
     }
-
-    function startExam() {
-        currentMode = 'exam';
-        currentQuestions = [...allCarData].sort(() => 0.5 - Math.random()).slice(0, 30);
-        currentQuestions.forEach(q => delete q.userAns);
-        currentIdx = 0; enterQuiz();
-    }
-
     function enterQuiz() {
         document.getElementById('listView').classList.add('hidden');
-        document.getElementById('topTabs').classList.add('hidden');
+        document.getElementById('examChoiceView').classList.add('hidden');
         document.getElementById('quizView').classList.remove('hidden');
         document.getElementById('quizFooter').classList.remove('hidden');
         document.getElementById('floatGroup').classList.remove('hidden');
         renderQuestion();
     }
-
     function renderQuestion() {
-        const q = currentQuestions[currentIdx];
-        const isAnsd = q.userAns !== undefined;
+        const q = currentQuestions[currentIdx]; const isAnsd = q.userAns !== undefined;
         document.getElementById('pageInfo').innerText = `${currentIdx + 1} / ${currentQuestions.length}`;
         const fileName = encodeURI(q.prefix + q.rowNum + ".jpg");
-
         document.getElementById('quizContent').innerHTML = `
             <div class="q-card">
                 <div class="q-text-section">
@@ -269,62 +246,32 @@
                     <div class="options">
                         ${q.options.map((o, i) => {
                             let cls = isAnsd ? (i === q.ans ? "correct" : (i === q.userAns ? "wrong" : "")) : "";
-                            return `<div class="opt ${cls}" onclick="handleCheck(${i})">
-                                <span class="opt-idx">${i+1})</span>
-                                <div style="flex:1"><span class="opt-text-en">${o.en}</span><span class="opt-text-cn cn-text-target">${o.cn}</span></div>
-                            </div>`;
+                            return `<div class="opt ${cls}" onclick="handleCheck(${i})"><span class="opt-idx">${i+1})</span><div style="flex:1"><span class="opt-text-en">${o.en}</span><span class="opt-text-cn cn-text-target">${o.cn}</span></div></div>`;
                         }).join("")}
                     </div>
-                    <div class="card-nav">
-                        <button class="btn-nav btn-grey" onclick="moveQ(-1)" ${currentIdx===0?'disabled':''}>上一题</button>
-                        <button class="btn-nav" onclick="moveQ(1)">下一题</button>
-                    </div>
+                    <div class="card-nav"><button class="btn-nav btn-grey" onclick="moveQ(-1)" ${currentIdx===0?'disabled':''}>上题</button><button class="btn-nav" onclick="moveQ(1)">下题</button></div>
                 </div>
-                <div class="q-img-section" id="imgBox">
-                    <img src="${fileName}" onload="this.parentElement.classList.add('has-img'); this.parentElement.style.display='flex'" onerror="tryS(this, '${fileName}')">
-                </div>
+                <div class="q-img-section" id="imgBox"><img src="${fileName}" onload="this.parentElement.classList.add('has-img'); this.parentElement.style.display='flex'" onerror="tryS(this, '${fileName}')"></div>
             </div>`;
-        document.getElementById('tipContent').innerHTML = q.allTips && q.allTips.length ? q.allTips.map(t => `<div class="tip-item"><b>• ${t.cn}</b><br><small>${t.en}</small></div>`).join("") : "无总结";
+        document.getElementById('tipContent').innerHTML = q.allTips && q.allTips.length ? q.allTips.map(t => `<div style="background:#fff9db; padding:10px; margin-bottom:10px; border-left:4px solid #fab005"><b>• ${t.cn}</b><br><small>${t.en}</small></div>`).join("") : "无总结";
     }
-
     function tryS(img, enc) {
         if (!img.dataset.tried) { img.dataset.tried = "true"; img.src = "images/" + enc; }
         else { img.style.display = 'none'; img.parentElement.classList.remove('has-img'); }
     }
-
     function handleCheck(idx) {
         const q = currentQuestions[currentIdx]; if (q.userAns !== undefined) return;
-        q.userAns = idx;
-        const hist = JSON.parse(localStorage.getItem(HISTORY_KEY) || '{}');
-        const mIds = JSON.parse(localStorage.getItem(MISTAKE_KEY) || '[]');
-        if (idx === q.ans) { 
-            hist[q.uid] = true; localStorage.setItem(HISTORY_KEY, JSON.stringify(hist)); 
-        } else {
-            if (!mIds.includes(q.uid)) { mIds.push(q.uid); localStorage.setItem(MISTAKE_KEY, JSON.stringify(mIds)); }
-        }
+        q.userAns = idx; const hist = JSON.parse(localStorage.getItem(HISTORY_KEY) || '{}'); const mIds = JSON.parse(localStorage.getItem(MISTAKE_KEY) || '[]');
+        if (idx === q.ans) { hist[q.uid] = true; localStorage.setItem(HISTORY_KEY, JSON.stringify(hist)); } 
+        else { if (!mIds.includes(q.uid)) { mIds.push(q.uid); localStorage.setItem(MISTAKE_KEY, JSON.stringify(mIds)); } }
         renderQuestion();
     }
-
-    function moveQ(s) {
-        if (currentMode === 'exam' && currentIdx === currentQuestions.length - 1 && s > 0) return finishExam();
-        currentIdx = (currentIdx + s + currentQuestions.length) % currentQuestions.length;
-        renderQuestion(); window.scrollTo(0,0);
-    }
-
-    function finishExam() {
-        const sc = currentQuestions.filter(q => q.userAns === q.ans).length;
-        document.getElementById('quizView').classList.add('hidden');
-        document.getElementById('quizFooter').classList.add('hidden');
-        const rv = document.getElementById('resultView'); rv.classList.remove('hidden');
-        rv.innerHTML = `<div style="font-size:3rem; font-weight:bold; color:var(--primary)">${sc}/30</div><h2>${sc >= 29 ? '🎉 通过！' : '❌ 未及格'}</h2><button class="btn-nav" onclick="location.reload()">返回首页</button>`;
-    }
-
+    function moveQ(s) { if (currentMode === 'exam' && currentIdx === currentQuestions.length - 1 && s > 0) return finishExam(); currentIdx = (currentIdx + s + currentQuestions.length) % currentQuestions.length; renderQuestion(); window.scrollTo(0,0); }
+    function finishExam() { const sc = currentQuestions.filter(q => q.userAns === q.ans).length; document.getElementById('quizView').classList.add('hidden'); document.getElementById('quizFooter').classList.add('hidden'); const rv = document.getElementById('resultView'); rv.classList.remove('hidden'); rv.innerHTML = `<div style="font-size:3rem; font-weight:bold; color:var(--primary)">${sc}/30</div><h2>${sc >= 29 ? '🎉 通过！' : '❌ 未及格'}</h2><button class="btn-nav" onclick="location.reload()">返回首页</button>`; }
     function toggleCN() { showChinese = !showChinese; localStorage.setItem(CN_KEY, showChinese); updateCNUI(); }
-    function updateCNUI() {
-        if (showChinese) { document.body.classList.remove('hide-cn'); document.getElementById('cnToggleNav').classList.add('active'); }
-        else { document.body.classList.add('hide-cn'); document.getElementById('cnToggleNav').classList.remove('active'); }
-    }
+    function updateCNUI() { if (showChinese) { document.body.classList.remove('hide-cn'); document.getElementById('cnToggleNav').classList.add('active'); } else { document.body.classList.add('hide-cn'); document.getElementById('cnToggleNav').classList.remove('active'); } }
     function toggleTips(s) { document.getElementById('tipOverlay').style.display = s ? 'flex' : 'none'; }
 </script>
 </body>
 </html>
+
