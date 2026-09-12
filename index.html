@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="referrer" content="no-referrer">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>希腊驾照模拟 - V36 全选项适配版</title>
+    <title>希腊驾照模拟 - V37 考规适配版</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     <style>
         :root { --primary: #00529b; --success: #27ae60; --error: #e74c3c; --bg: #f4f7f9; --tip-accent: #fab005; --toggle-bg: #cbd5e0; }
@@ -88,10 +88,15 @@
     </div>
     <div id="examChoiceView" class="exam-choice hidden">
         <h3>请选择考试车型</h3>
-        <p style="color:#666">随机抽取 30 题，错 2 题以上不及格</p>
-        <div style="display:flex; gap:20px; justify-content:center; margin-top:20px">
-            <button class="btn-nav" style="background:#00529b; max-width:200px" onclick="startExam('汽车')">🚗 汽车考</button>
-            <button class="btn-nav" style="background:#e67e22; max-width:200px" onclick="startExam('摩托')">🏍️ 摩托考</button>
+        <div style="display:flex; gap:20px; justify-content:center; margin-top:20px; flex-wrap:wrap">
+            <div style="flex:1; min-width:140px">
+                <button class="btn-nav" style="background:#00529b" onclick="startExam('汽车')">🚗 汽车模拟考</button>
+                <p style="font-size:0.75rem; color:#888; margin-top:8px">共 30 题，错 2 题不及格</p>
+            </div>
+            <div style="flex:1; min-width:140px">
+                <button class="btn-nav" style="background:#e67e22" onclick="startExam('摩托')">🏍️ 摩托模拟考</button>
+                <p style="font-size:0.75rem; color:#888; margin-top:8px">共 10 题，错 2 题不及格</p>
+            </div>
         </div>
     </div>
     <div id="quizView" class="hidden"><div id="quizContent"></div></div>
@@ -112,12 +117,11 @@
     </div>
 </div>
 <script>
-    const HISTORY_KEY = 'g_hist_v36';
-    const MISTAKE_KEY = 'g_mist_v36';
-    const CN_KEY = 'g_show_cn_v36';
+    const HISTORY_KEY = 'g_hist_v37';
+    const MISTAKE_KEY = 'g_mist_v37';
+    const CN_KEY = 'g_show_cn_v37';
     let allCarData = [], allMotoData = [], currentQuestions = [], currentIdx = 0, currentMode = 'list';
     let showChinese = localStorage.getItem(CN_KEY) !== 'false';
-
     window.onload = function() {
         updateCNUI();
         Promise.all([fetchCSV("data.csv"), fetchCSV("datamoto.csv")]).then(([car, moto]) => {
@@ -143,30 +147,17 @@
         }
         return list;
     }
-
     function splitLogic(en, cn) {
-        // 核心判定修复：正则匹配 √ + 任意数字，不再限制 1-4
         const ansMatch = cn.match(/√\s*(\d)\)/);
         let ans = ansMatch ? parseInt(ansMatch[1]) - 1 : -1;
-
         const s = (txt) => {
             let p = txt.split(/\d\)\s?/);
-            // 提取题目和所有选项
-            return { 
-                q: p[0].replace(/√/g, "").trim(), 
-                o: p.slice(1).map(x => x.replace(/√/g, "").trim()).filter(x => x !== "") 
-            };
+            return { q: p[0].replace(/√/g, "").trim(), o: p.slice(1).map(x => x.replace(/√/g, "").trim()).filter(x => x !== "") };
         };
         const eC = s(en), cC = s(cn);
         if (eC.o.length < 2) return null;
-        
-        return { 
-            qEn: eC.q, qCn: cC.q, 
-            options: eC.o.map((e, i) => ({ en: e, cn: cC.o[i] || "" })), 
-            ans: ans 
-        };
+        return { qEn: eC.q, qCn: cC.q, options: eC.o.map((e, i) => ({ en: e, cn: cC.o[i] || "" })), ans: ans };
     }
-
     function renderGrids() {
         const hist = JSON.parse(localStorage.getItem(HISTORY_KEY) || '{}');
         const mIds = JSON.parse(localStorage.getItem(MISTAKE_KEY) || '[]');
@@ -189,7 +180,6 @@
         updateSection(allCarData, 'carGrid', 'carTotalBar', 'carTotalText');
         updateSection(allMotoData, 'motoGrid', 'motoTotalBar', 'motoTotalText');
     }
-
     function startPractice(cat, type) {
         currentMode = 'practice'; currentQuestions = (type === '汽车' ? allCarData : allMotoData).filter(d => d.cat === cat);
         currentIdx = 0; enterQuiz();
@@ -202,7 +192,8 @@
     }
     function startExam(type) {
         currentMode = 'exam';
-        currentQuestions = [...(type === '汽车' ? allCarData : allMotoData)].sort(() => 0.5 - Math.random()).slice(0, 30);
+        const limit = (type === '汽车') ? 30 : 10;
+        currentQuestions = [...(type === '汽车' ? allCarData : allMotoData)].sort(() => 0.5 - Math.random()).slice(0, limit);
         currentQuestions.forEach(q => delete q.userAns);
         currentIdx = 0; enterQuiz();
     }
@@ -233,7 +224,10 @@
                     <div class="options">
                         ${q.options.map((o, i) => {
                             let cls = isAnsd ? (i === q.ans ? "correct" : (i === q.userAns ? "wrong" : "")) : "";
-                            return `<div class="opt ${cls}" onclick="handleCheck(${i})"><span class="opt-idx">${i+1})</span><div style="flex:1"><span class="opt-text-en">${o.en}</span><span class="opt-text-cn cn-text-target">${o.cn}</span></div></div>`;
+                            return `<div class="opt ${cls}" onclick="handleCheck(${i})">
+                                <span class="opt-idx">${i+1})</span>
+                                <div style="flex:1"><span class="opt-text-en">${o.en}</span><span class="opt-text-cn cn-text-target">${o.cn}</span></div>
+                            </div>`;
                         }).join("")}
                     </div>
                     <div class="card-nav"><button class="btn-nav btn-grey" onclick="moveQ(-1)" ${currentIdx===0?'disabled':''}>上题</button><button class="btn-nav" onclick="moveQ(1)">下题</button></div>
@@ -254,7 +248,17 @@
         renderQuestion();
     }
     function moveQ(s) { if (currentMode === 'exam' && currentIdx === currentQuestions.length - 1 && s > 0) return finishExam(); currentIdx = (currentIdx + s + currentQuestions.length) % currentQuestions.length; renderQuestion(); window.scrollTo(0,0); }
-    function finishExam() { const sc = currentQuestions.filter(q => q.userAns === q.ans).length; document.getElementById('quizView').classList.add('hidden'); document.getElementById('quizFooter').classList.add('hidden'); const rv = document.getElementById('resultView'); rv.classList.remove('hidden'); rv.innerHTML = `<div style="font-size:3rem; font-weight:bold; color:var(--primary)">${sc}/30</div><h2>${sc >= 29 ? '🎉 通过！' : '❌ 未及格'}</h2><button class="btn-nav" onclick="location.reload()">返回首页</button>`; }
+    function finishExam() { 
+        const sc = currentQuestions.filter(q => q.userAns === q.ans).length; 
+        const total = currentQuestions.length;
+        const pass = sc >= (total === 30 ? 29 : 9); // 30题对29题及格，10题对9题及格
+        document.getElementById('quizView').classList.add('hidden'); document.getElementById('quizFooter').classList.add('hidden'); 
+        const rv = document.getElementById('resultView'); rv.classList.remove('hidden'); 
+        rv.innerHTML = `<div style="font-size:3rem; font-weight:bold; color:var(--primary)">${sc}/${total}</div>
+            <h2>${pass ? '🎉 恭喜通过！' : '❌ 未及格'}</h2>
+            <p>及格标准：错题数不得超过 1 题</p>
+            <button class="btn-nav" style="margin-top:20px" onclick="location.reload()">返回首页</button>`; 
+    }
     function toggleCN() { showChinese = !showChinese; localStorage.setItem(CN_KEY, showChinese); updateCNUI(); }
     function updateCNUI() { if (showChinese) { document.body.classList.remove('hide-cn'); document.getElementById('cnToggleNav').classList.add('active'); } else { document.body.classList.add('hide-cn'); document.getElementById('cnToggleNav').classList.remove('active'); } }
     function toggleTips(s) { document.getElementById('tipOverlay').style.display = s ? 'flex' : 'none'; }
